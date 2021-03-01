@@ -7,7 +7,7 @@
             <v-card class="justify-center">
               <v-text-field
                 ref="security"
-                label="Security Key"
+                label="Security Key deploy 2021-02-26"
                 id="id"
                 v-model="securitykey"
                 :type="'password'"
