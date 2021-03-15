@@ -46,6 +46,11 @@ const routes = [
     name: "deploy",
     component: () => import("../views/Deploy.vue"),
   },
+  {
+    path: "/addtask",
+    name: "addtask",
+    component: () => import("../views/AddTask.vue"),
+  },
 ];
 
 const router = new VueRouter({
