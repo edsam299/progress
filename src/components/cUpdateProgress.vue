@@ -14,7 +14,7 @@
               </v-btn>
               <v-btn to="/deploy" small class="mr-3" color="blue">
                 <v-icon left>mdi-checkbox-marked-circle</v-icon>Deploy
-              </v-btn>              
+              </v-btn>
               <v-btn @click="isActivep = !isActivep" small class="mr-3">
                 Switch
               </v-btn>
@@ -46,7 +46,8 @@
           <v-row class="pa-1 ma-0" v-if="isActivep">
             <v-col cols="12">
               <span v-for="(item, index) in progval" :key="index">
-                <v-card v-if="item.statusCode=='active'"
+                <v-card
+                  v-if="item.statusCode == 'active'"
                   v-model="item.statusCode"
                   class="ma-1 mt-3 pb-3 pl-4"
                   color="grey lighten-5"
@@ -77,8 +78,9 @@
                         class="indigo--text body-2"
                         v-if="item.description != null"
                       >
-                       <span class=""> รายละเอียด: </span>{{item.description}}
-                      </h4>                      
+                        <span class=""> รายละเอียด: </span
+                        >{{ item.description }}
+                      </h4>
                       <h4
                         class="indigo--text body-2"
                         v-if="item.startdate != null"
@@ -116,7 +118,13 @@
                             xl="5"
                             class="mt-1"
                           >
-                            <v-chip label small color="teal" dark v-if="member.starttaskdate!=null">
+                            <v-chip
+                              label
+                              small
+                              color="teal"
+                              dark
+                              v-if="member.starttaskdate != null"
+                            >
                               วันที่เริ่มงาน : {{ member.starttaskdate }}
                             </v-chip>
                             <v-chip
@@ -167,10 +175,17 @@
                           >
                             <v-layout row justify-space-between class="px-5">
                               <strong>{{ task.task }}</strong>
-                              <strong>{{ task.value }}%  <v-icon small color="black" v-if="task.value==100">mdi-checkbox-marked-circle-outline</v-icon></strong>
+                              <strong
+                                >{{ task.value }}%
+                                <v-icon
+                                  small
+                                  color="black"
+                                  v-if="task.value == 100"
+                                  >mdi-checkbox-marked-circle-outline</v-icon
+                                ></strong
+                              >
                             </v-layout>
                           </v-progress-linear>
-                         
                         </span>
                         <div
                           class="black--text pl-2 mt-2"
@@ -257,7 +272,13 @@
                     </v-chip></v-col
                   >
                   <v-col class="text-right">
-                    <v-chip label small color="teal" dark v-if="member.starttaskdate!=null">
+                    <v-chip
+                      label
+                      small
+                      color="teal"
+                      dark
+                      v-if="member.starttaskdate != null"
+                    >
                       วันที่เริ่มงาน : {{ member.starttaskdate }}
                     </v-chip>
                     <v-chip color="primary" class="ma-2" label small dark>
@@ -360,7 +381,6 @@
                       value="dlogRemark"
                       v-model="member.remark"
                     ></v-text-field>
-                    
                   </v-col>
                   <v-col cols="4">
                     <v-chip
@@ -393,8 +413,8 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <Snackbar :snackbarcomponent="snackbarcomponent"/>
-   <!-- <v-snackbar
+    <Snackbar :snackbarcomponent="snackbarcomponent" />
+    <!-- <v-snackbar
       v-model="snackbar.visible"
       auto-height
       :color="snackbar.color"
@@ -427,8 +447,8 @@ import Snackbar from "@/components/cSnackbar.vue";
 export default {
   name: "Progress",
   props: ["taskvalue"],
-  components:{
-    Snackbar
+  components: {
+    Snackbar,
   },
   data() {
     return {
@@ -438,17 +458,17 @@ export default {
       // y:'top',
       progressstatus: null,
       snackbarcomponent: {
-        color: 'green',
-        icon: '',
-        mode: '',
+        color: "green",
+        icon: "",
+        mode: "",
         position: "top",
-        text: '',
+        text: "",
         timeout: 3000,
-        title: '',
+        title: "",
         visible: false,
       },
       statuswait: true,
-    //  checked: false,
+      //  checked: false,
       members: ["ALL"], //["ALL","บุษรา จี้เพชรงาม","ธนสาร กิติศุภวงศ์","ฐิติกานต์ เฉยบำรุง","สุกัญญา ศรีเตชะ","มงคล กิจรุ่งวิริยะ","ณรงค์เดช ช้างพลายงาม"],
       timestamp: null,
       index: 0,
@@ -511,20 +531,34 @@ export default {
           { statusCode: "active" }
         )
         .catch((err) => {
-          this.setsnackbar("Load Project "+err, "mdi-database", "Fail", "error", 5000);
+          this.setsnackbar(
+            "Load Project " + err,
+            "mdi-database",
+            "Fail",
+            "error",
+            5000
+          );
         });
-        if(result.data.length>0){
-          this.progval = result.data;
-          this.statuswait = false;
-          this.displayChart();
-        }
+      if (result.data.length > 0) {
+        this.progval = result.data;
+        this.statuswait = false;
+        this.displayChart();
+      }
     },
     async getAllMembers() {
-      let result = await axios.get(
-        "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getAllMember"
-      ).catch((err)=>{
-         this.setsnackbar("Load Member "+err, "mdi-database", "Fail", "error", 5000);
-      });
+      let result = await axios
+        .get(
+          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getAllMember"
+        )
+        .catch((err) => {
+          this.setsnackbar(
+            "Load Member " + err,
+            "mdi-database",
+            "Fail",
+            "error",
+            5000
+          );
+        });
       if (result.data != null) {
         for (let i = 0; i < result.data.length; i++) {
           if (result.data[i].statuscode == "active") {
@@ -551,7 +585,7 @@ export default {
       this.saveProgress(this.progval[this.index]);
     },
     async saveProgress(progress) {
-      this.setsnackbar("กำลังจัดเก็บ", "mdi-database", "save", "info",5000);
+      this.setsnackbar("กำลังจัดเก็บ", "mdi-database", "save", "info", 5000);
       let remark = {};
       let timestamp = this.getTimeStamp("YYYY-MM-DD HH:mm:ss");
       let date = this.getTimeStamp("YYYY-MM-DD");
@@ -588,13 +622,13 @@ export default {
           }
           if (duplicateremark == false) {
             progress.members[this.memberIndex].remarkhistory.push(remark);
-          }          
+          }
         }
       }
-      if(this.progressstatus=='completed'){
-        progress.statusCode='completed'
+      if (this.progressstatus == "completed") {
+        progress.statusCode = "completed";
       }
-      progress.members[this.memberIndex].addremark=0;
+      progress.members[this.memberIndex].addremark = 0;
       progress.members[this.memberIndex].lastupd = timestamp;
       this.taskpercentage = [];
       let result = await axios
@@ -630,7 +664,7 @@ export default {
       this.snackbarcomponent.mode = "multi-line";
       this.snackbarcomponent.color = color;
       this.snackbarcomponent.visible = true;
-      this.snackbarcomponent.timeout = timeout
+      this.snackbarcomponent.timeout = timeout;
     },
     addActuallyday(member, addType) {
       if (member.starttaskdate == null) {
@@ -700,18 +734,23 @@ export default {
         ].taskhistory.push(task);
       }
 
-    let alltask=0; let result=0;
-    for(let i=0; i<this.progval[this.index].members.length; i++){
-      for(let j=0; j<this.progval[this.index].members[i].tasks.length; j++){
-        result+=this.progval[this.index].members[i].tasks[j].value;
-        alltask++;
+      let alltask = 0;
+      let result = 0;
+      for (let i = 0; i < this.progval[this.index].members.length; i++) {
+        for (
+          let j = 0;
+          j < this.progval[this.index].members[i].tasks.length;
+          j++
+        ) {
+          result += this.progval[this.index].members[i].tasks[j].value;
+          alltask++;
+        }
       }
-    }
-    if(Number(Math.round(result / alltask + "e" + 2) + "e-" + 2)==100){
-      this.progressstatus='completed'
-    }else{
-      this.progressstatus='active'
-    }
+      if (Number(Math.round(result / alltask + "e" + 2) + "e-" + 2) == 100) {
+        this.progressstatus = "completed";
+      } else {
+        this.progressstatus = "active";
+      }
 
       //}
     },
@@ -747,7 +786,7 @@ export default {
       if (this.$store.getters.getAuthen) {
         // ถ้าผ่าน authen จะ add progress ได้
         this.dialogAdd = true;
-       // this.checked = false;
+        // this.checked = false;
         this.dlogMember = objItem.member;
         this.dlogRemark = objItem.remark;
         this.dlogProject = objItem.project;
@@ -861,7 +900,7 @@ export default {
   font-size: 14px;
   font-weight: 500;
 }
-.fontfocus{
+.fontfocus {
   color: rgb(233, 0, 0);
   font-size: 14px;
   font-weight: 500;
