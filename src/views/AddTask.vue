@@ -26,13 +26,23 @@
                 <v-col cols="12" class="d-flex flex-row align-center">
                   <span> {{ item.member }}</span>
                   <v-spacer></v-spacer>
-                  <v-btn color="error">x</v-btn>
+                  <v-btn color="error">Remove Member</v-btn>
                 </v-col>
                 <v-card>
                   <v-card-title primary-title>
-                     <v-container grid-list-xs>
+                      <v-btn color="success">AddTask</v-btn> 
+                     <v-container grid-list-xs>                      
                        <v-col cols="12">
-                         ssss
+                         <v-text-field
+                           name="name"
+                           label="task"
+                           id="id"
+                         ></v-text-field>
+                         <v-text-field
+                           name="name"
+                           label="task"
+                           id="id"
+                         ></v-text-field>
                        </v-col>
                      </v-container>
                   </v-card-title>
