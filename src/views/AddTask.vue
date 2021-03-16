@@ -1,25 +1,49 @@
 <template>
-  <div>
+  <div id="addtask">
     <v-app>
       <v-main>
-        <v-container fluid>          
-          <v-row no-gutters>
-            <v-col cols="12">
-              <v-layout row wrap justify-center>
-                <span v-for="(item, index) in project.member" :key="index">
-                  <v-row class="pa-1 ma-0">
-                    <v-card>                      
-                      <span>{{item.member}}</span>
-                      <span v-for="(items, indexs) in item.task" :key="indexs">
-                        <v-button class="success" @click="addTask(indexs)">addTask</v-button>
-                        {{items.name}}
-                      </span>
-                    </v-card>
-                  </v-row>
-                </span>
-              </v-layout>
+        <v-container>
+          <v-row>
+            <v-col cols="10">
+              <v-text-field
+                name="name"
+                label="Project"
+                id="id"
+              ></v-text-field>              
+            </v-col>
+            <v-col cols="2">
+              <v-btn block color="success">Add Member</v-btn>
             </v-col>
           </v-row>
+          <v-card>
+            <v-card-title primary-title>
+              <v-container>
+                <v-row
+                  class="d-flex flex-row align-center"
+                  v-for="(item, index) in project.member"
+                  :key="index"
+                >
+                <v-col cols="12" class="d-flex flex-row align-center">
+                  <span> {{ item.member }}</span>
+                  <v-spacer></v-spacer>
+                  <v-btn color="error">x</v-btn>
+                </v-col>
+                <v-card>
+                  <v-card-title primary-title>
+                     <v-container grid-list-xs>
+                       <v-col cols="12">
+                         ssss
+                       </v-col>
+                     </v-container>
+                  </v-card-title>
+                </v-card>
+                  <v-col cols="12">
+                    <v-divider></v-divider>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-title>
+          </v-card>
         </v-container>
       </v-main>
     </v-app>
@@ -28,6 +52,7 @@
 
 <script>
 export default {
+  name: "addtask",
   data() {
     return {
       project: {
@@ -36,28 +61,27 @@ export default {
             member: "ED",
             task: [
               { name: "Code Review", desc: "CC" },
-              { name: "Coding", desc: "CCD" }
-            ]
+              { name: "Coding", desc: "CCD" },
+            ],
           },
           {
             member: "ED1",
             task: [
               { name: "Code Review", desc: "CC" },
-              { name: "Coding", desc: "CCD" }
-            ]
-          }
-        ]
-      }
+              { name: "Coding", desc: "CCD" },
+            ],
+          },
+        ],
+      },
     };
   },
   methods: {
     addTask(index) {
-      console.log(index)
+      console.log(index);
       this.project.menber.task[index].push({ name: "ed", desc: "ssss" });
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style>
-</style>
+<style></style>
