@@ -20,7 +20,6 @@
                 label="Description"
                 v-model="project.description"
                 id="id"
-                width="30px"
                 autocomplete="nope"
               ></v-text-field>
             </v-col>
@@ -44,6 +43,7 @@
                 name="name"
                 label="id"
                 id="id"
+                v-model="idproject"
                 autocomplete="nope"
               ></v-text-field>
             </v-col>
@@ -52,9 +52,24 @@
                 >getProject</v-btn
               >
               <v-btn small color="success" @click="save()">save</v-btn>
+              <v-btn small color="error" @click="clear()">X</v-btn>
             </v-col>
           </v-row>
-          <v-card height="60%">
+          <div class="pt-5 mt-5" v-if="statuswait">
+            <div class="text-center">
+              <h2 class="primary--text">
+                <v-icon x-large color="primary">mdi-weather-cloudy</v-icon>
+                กำลังโหลดข้อมูล...
+              </h2>
+            </div>
+            <div>
+              <v-progress-linear
+                indeterminate
+                color="primary"
+              ></v-progress-linear>
+            </div>
+          </div>
+          <v-card outlined>
             <v-card-title primary-title>
               <v-container fluid>
                 <v-row
@@ -63,13 +78,23 @@
                   :key="index"
                 >
                   <v-col cols="12" class="d-flex flex-row align-center">
-                    <span> Developer: {{ item.member }}</span>
-                    <v-spacer></v-spacer>
+                    <v-col cols="3">
+                      <span> Developer: {{ item.member }}</span>
+                    </v-col>
+                    <v-col cols="1">
+                      <v-text-field
+                        dense
+                        label="Mandays"
+                        v-model="item.manday"
+                      ></v-text-field>
+                    </v-col>
+
+                    <!-- <v-spacer></v-spacer> -->
                     <v-btn small color="error" @click="removeMember(index)"
                       >Remove Member</v-btn
                     >
                   </v-col>
-                  <v-card height="60%">
+                  <v-card outlined>
                     <v-btn small color="success" @click="addTask(index)"
                       >Add Task</v-btn
                     >
@@ -134,32 +159,22 @@ export default {
         title: "",
         visible: false,
       },
+      statuswait: false,
+      idproject: null,
       memberSelected: "",
       members: [],
       project: {
-        members: [
-          // {
-          //   member: "",
-          //   task: [
-          //     // { name: "Code Review", desc: "CC" },
-          //     // { name: "Coding", desc: "CCD" },
-          //     // { name: "Coding", desc: "CCD" },
-          //     // { name: "Coding", desc: "CCD" },
-          //   ],
-          // },
-          // {
-          //   // member: "ED1",
-          //   task: [
-          //     // { name: "Code Review", desc: "CC" },
-          //     // { name: "Coding++", desc: "CCD" },
-          //   ],
-          // },
-        ],
+        enddate: "",
+        startdate: "",
+        kickoff: null,
+        statusCode: "active",
+        members: [],
       },
     };
   },
   methods: {
     setsnackbar(text, icon, title, color, timeout) {
+      console.log(timeout);
       this.snackbarcomponent.text = text;
       this.snackbarcomponent.icon = icon;
       this.snackbarcomponent.title = title;
@@ -168,8 +183,16 @@ export default {
       this.snackbarcomponent.visible = true;
       this.snackbarcomponent.timeout = timeout;
     },
-    save(){
-      console.log(JSON.stringify(this.project))
+    clear() {
+      this.project = [];
+      this.idproject = "";
+    },
+    save() {
+      if (typeof this.project.id === "undefined") {
+        this.addProject();
+      } else {
+        this.updateProject();
+      }
     },
     setMember(member) {
       this.memberSelected = member;
@@ -178,7 +201,14 @@ export default {
     addMemberToTask() {
       this.project.members.push({
         member: this.memberSelected,
-        name: "test",
+        percentageadd: 0,
+        actuallyday: 0,
+        manday: this.manday,
+        lastupd: "",
+        updActuallyday: "",
+        starttaskdate: null,
+        addremark: 0,
+        remark: "",
         tasks: [],
       });
     },
@@ -222,10 +252,43 @@ export default {
       }
     },
     async getProjectById() {
+      this.statuswait = true;
       let result = await axios
         .post(
           "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getProjectById",
-          { id: "3C1Yt2zAWt9MuMDq5nfz" }
+          { id: this.idproject }
+        )
+        .catch((err) => {
+          this.setsnackbar(
+            "Load Project " + err,
+            "mdi-database",
+            "Fail",
+            "error",
+            5000
+          );
+        });
+      console.log(result.data);
+      if (result.data.length > 0) {
+        this.project = result.data[0];
+        this.statuswait = false;
+      } else {
+        this.statuswait = false;
+        this.setsnackbar(
+          "search not found",
+          "mdi-checkbox-marked-circle-outline",
+          "not found",
+          "error",
+          5000
+        );
+      }
+    },
+
+    async addProject() {
+      this.setsnackbar("กำลังจัดเก็บ", "mdi-database", "save", "info", 5000);
+      let result = await axios
+        .post(
+          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/addProject",
+          this.project
         )
         .catch((err) => {
           this.setsnackbar(
@@ -237,8 +300,43 @@ export default {
           );
         });
       if (result.data != null) {
-        console.log(JSON.stringify(result.data[0]));
-        this.project = result.data[0];
+        this.setsnackbar(
+          "save success",
+          "mdi-checkbox-marked-circle-outline",
+          "Success",
+          "success",
+          5000
+        );
+        this.project = [];
+      }
+    },
+
+    async updateProject() {
+      this.setsnackbar("กำลังจัดเก็บ", "mdi-database", "save", "info", 5000);
+      let result = await axios
+        .post(
+          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/updateProject",
+          this.project
+        )
+        .catch((err) => {
+          this.setsnackbar(
+            "Load Project " + err,
+            "mdi-database",
+            "Fail",
+            "error",
+            5000
+          );
+        });
+      if (result.data != null) {
+        this.setsnackbar(
+          "save success",
+          "mdi-checkbox-marked-circle-outline",
+          "Success",
+          "success",
+          5000
+        );
+        this.project = [];
+        this.idproject = "";
       }
     },
   },

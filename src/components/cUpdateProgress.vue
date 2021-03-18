@@ -80,7 +80,7 @@
                       >
                         <span class=""> รายละเอียด: </span
                         >{{ item.description }}
-                      </h4>
+                      </h4>                     
                       <h4
                         class="indigo--text body-2"
                         v-if="item.startdate != null"
@@ -136,8 +136,8 @@
                             >
                               Manday : {{ member.actuallyday }}/{{
                                 member.manday
-                              }}
-                            </v-chip>
+                              }}                             
+                            </v-chip>                           
                           </v-col>
                           <v-col
                             cols="12"
@@ -194,7 +194,7 @@
                           <font class="font-weight-black"> Note : </font>
                           {{ member.remark }}
                         </div>
-                      </span>
+                      </span>                     
                     </v-col>
                   </v-row>
                   <v-layout justify-start> </v-layout>
@@ -243,7 +243,7 @@
                 <h2>{{ calProgress(progressselect) }}%</h2>
               </v-progress-circular>
               <div class="title font-weight-regular black--text">
-                ความคืบหน้าของงาน
+                ความคืบหน้าของงาน 
               </div>
             </v-col>
             <v-col cols="3"> </v-col>
@@ -395,6 +395,7 @@
                     <span class="fontfocus" v-if="member.lastupd != null"
                       >UPDATE : {{ member.lastupd }}</span
                     >
+                     {{idproject}}
                   </v-col>
                 </v-row>
               </v-card>
@@ -484,6 +485,7 @@ export default {
       dlogManday: null,
       updActuallyday: 1,
       progressselect: null,
+      idproject:null,
       progval: [],
       tmpProgress: [],
       tmpAllprogress: [],
@@ -794,6 +796,7 @@ export default {
         this.progressselect = objItem.members;
         this.actuallyday = objItem.actuallyday;
         this.index = index; // index ของ progress ใหญ่
+        this.idproject = objItem.id;
       }
     },
     getcolorProgressLine(pline) {
