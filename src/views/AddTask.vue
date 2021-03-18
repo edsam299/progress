@@ -4,22 +4,39 @@
       <v-main>
         <v-container fluid>
           <v-row no-gutters>
-            <v-col cols="6" class="d-flex flex-row align-center">
+            <v-col cols="1">
               <v-text-field
                 name="name"
                 label="Project"
+                v-model="project.project"
                 id="id"
                 autocomplete="nope"
+                width="10px"
               ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                name="name"
+                label="Description"
+                v-model="project.description"
+                id="id"
+                width="30px"
+                autocomplete="nope"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="2" class="d-flex flex-row align-center">
               <v-select
                 class="mt-0 pt-0"
                 :items="members"
                 label="Developer Team"
+                v-model="memberSelected"
+                @change="setMember(memberSelected)"
+                width="10%"
               ></v-select>
             </v-col>
-            <v-col cols="2">
+            <v-col cols="1">
               <v-btn small color="success" @click="addMemberToTask()"
-                >Add Member</v-btn
+                >+Developer</v-btn
               >
             </v-col>
             <v-col cols="2">
@@ -34,9 +51,10 @@
               <v-btn small color="blue" @click="getProjectById()"
                 >getProject</v-btn
               >
+              <v-btn small color="success" @click="save()">save</v-btn>
             </v-col>
           </v-row>
-          <v-card>
+          <v-card height="60%">
             <v-card-title primary-title>
               <v-container fluid>
                 <v-row
@@ -51,7 +69,7 @@
                       >Remove Member</v-btn
                     >
                   </v-col>
-                  <v-card>
+                  <v-card height="60%">
                     <v-btn small color="success" @click="addTask(index)"
                       >Add Task</v-btn
                     >
@@ -63,6 +81,7 @@
                         <v-container grid-list-xs>
                           <v-col cols="12">
                             <v-text-field
+                              autofocus
                               name="name"
                               label="task"
                               id="id"
@@ -115,6 +134,7 @@ export default {
         title: "",
         visible: false,
       },
+      memberSelected: "",
       members: [],
       project: {
         members: [
@@ -148,8 +168,19 @@ export default {
       this.snackbarcomponent.visible = true;
       this.snackbarcomponent.timeout = timeout;
     },
+    save(){
+      console.log(JSON.stringify(this.project))
+    },
+    setMember(member) {
+      this.memberSelected = member;
+      console.log(this.memberSelected);
+    },
     addMemberToTask() {
-      this.project.members.push({ name: "test", tasks: [] });
+      this.project.members.push({
+        member: this.memberSelected,
+        name: "test",
+        tasks: [],
+      });
     },
     addTask(index) {
       console.log(index);
