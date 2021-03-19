@@ -44,7 +44,7 @@
                 label="id"
                 id="id"
                 v-model="idproject"
-                autocomplete="nope"
+                :autocomplete="autocomplete"
               ></v-text-field>
             </v-col>
             <v-col cols="2">
@@ -86,6 +86,7 @@
                         dense
                         label="Mandays"
                         v-model="item.manday"
+                        autocomplete="nope"
                       ></v-text-field>
                     </v-col>
 
