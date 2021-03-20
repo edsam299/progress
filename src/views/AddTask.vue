@@ -6,7 +6,7 @@
           <v-row no-gutters>
             <v-col cols="1">
               <v-text-field
-                name="name"
+                name="id"
                 label="Project"
                 v-model="project.project"
                 id="id"
@@ -29,6 +29,7 @@
                 :items="members"
                 label="Developer Team"
                 v-model="memberSelected"
+                ref="developer"
                 @change="setMember(memberSelected)"
                 width="10%"
               ></v-select>
@@ -43,8 +44,9 @@
                 name="name"
                 label="id"
                 id="id"
+                ref="idproject"
                 v-model="idproject"
-                :autocomplete="autocomplete"
+                autocomplete="autocomplete"
               ></v-text-field>
             </v-col>
             <v-col cols="2">
@@ -200,18 +202,29 @@ export default {
       console.log(this.memberSelected);
     },
     addMemberToTask() {
-      this.project.members.push({
-        member: this.memberSelected,
-        percentageadd: 0,
-        actuallyday: 0,
-        manday: this.manday,
-        lastupd: "",
-        updActuallyday: "",
-        starttaskdate: null,
-        addremark: 0,
-        remark: "",
-        tasks: [],
-      });
+      if (this.memberSelected == "") {
+        this.setsnackbar(
+          "Please select developer",
+          "mdi-checkbox-marked-circle-outline",
+          "not found",
+          "error",
+          1500
+        );
+        this.$refs.developer.focus();
+      } else {
+        this.project.members.push({
+          member: this.memberSelected,
+          percentageadd: 0,
+          actuallyday: 0,
+          manday: this.manday,
+          lastupd: "",
+          updActuallyday: "",
+          starttaskdate: null,
+          addremark: 0,
+          remark: "",
+          tasks: [],
+        });
+      }
     },
     addTask(index) {
       console.log(index);
@@ -253,34 +266,45 @@ export default {
       }
     },
     async getProjectById() {
-      this.statuswait = true;
-      let result = await axios
-        .post(
-          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getProjectById",
-          { id: this.idproject }
-        )
-        .catch((err) => {
-          this.setsnackbar(
-            "Load Project " + err,
-            "mdi-database",
-            "Fail",
-            "error",
-            5000
-          );
-        });
-      console.log(result.data);
-      if (result.data.length > 0) {
-        this.project = result.data[0];
-        this.statuswait = false;
-      } else {
-        this.statuswait = false;
+      if (this.idproject == null) {
         this.setsnackbar(
-          "search not found",
+          "Please insert idproject",
           "mdi-checkbox-marked-circle-outline",
           "not found",
           "error",
           5000
         );
+        this.$refs.idproject.focus();
+      } else {
+        this.statuswait = true;
+        let result = await axios
+          .post(
+            "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getProjectById",
+            { id: this.idproject }
+          )
+          .catch((err) => {
+            this.setsnackbar(
+              "Load Project " + err,
+              "mdi-database",
+              "Fail",
+              "error",
+              5000
+            );
+          });
+        console.log(result.data);
+        if (result.data.length > 0) {
+          this.project = result.data[0];
+          this.statuswait = false;
+        } else {
+          this.statuswait = false;
+          this.setsnackbar(
+            "search not found",
+            "mdi-checkbox-marked-circle-outline",
+            "not found",
+            "error",
+            5000
+          );
+        }
       }
     },
 

@@ -9,6 +9,23 @@
               <h5 class="caption">Progress Update & Team Status</h5>
             </v-col>
             <v-col cols="12" sm="12" md="3" lg="3" xl="3" class="text-right">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    <v-btn
+                      to="/addtask"
+                      small
+                      class="mr-3"
+                      color="green"
+                      v-show="addtask"
+                    >
+                      <v-icon left>mdi-account-multiple-plus</v-icon>
+                    </v-btn></span
+                  >
+                </template>
+                <span>AddTask</span>
+              </v-tooltip>
+
               <v-btn to="/complete" small class="mr-3" color="green">
                 <v-icon left>mdi-checkbox-marked-circle</v-icon>Complete
               </v-btn>
@@ -80,7 +97,7 @@
                       >
                         <span class=""> รายละเอียด: </span
                         >{{ item.description }}
-                      </h4>                     
+                      </h4>
                       <h4
                         class="indigo--text body-2"
                         v-if="item.startdate != null"
@@ -136,8 +153,8 @@
                             >
                               Manday : {{ member.actuallyday }}/{{
                                 member.manday
-                              }}                             
-                            </v-chip>                           
+                              }}
+                            </v-chip>
                           </v-col>
                           <v-col
                             cols="12"
@@ -194,7 +211,7 @@
                           <font class="font-weight-black"> Note : </font>
                           {{ member.remark }}
                         </div>
-                      </span>                     
+                      </span>
                     </v-col>
                   </v-row>
                   <v-layout justify-start> </v-layout>
@@ -243,7 +260,7 @@
                 <h2>{{ calProgress(progressselect) }}%</h2>
               </v-progress-circular>
               <div class="title font-weight-regular black--text">
-                ความคืบหน้าของงาน 
+                ความคืบหน้าของงาน
               </div>
             </v-col>
             <v-col cols="3"> </v-col>
@@ -395,7 +412,7 @@
                     <span class="fontfocus" v-if="member.lastupd != null"
                       >UPDATE : {{ member.lastupd }}</span
                     >
-                     {{idproject}}
+                    {{ idproject }}
                   </v-col>
                 </v-row>
               </v-card>
@@ -479,13 +496,14 @@ export default {
       skill: 0,
       isActivep: true,
       dialogAdd: false,
+      addtask: false,
       dlogMember: null,
       dlogRemark: null,
       dlogProject: null,
       dlogManday: null,
       updActuallyday: 1,
       progressselect: null,
-      idproject:null,
+      idproject: null,
       progval: [],
       tmpProgress: [],
       tmpAllprogress: [],
@@ -881,6 +899,10 @@ export default {
     },
   },
   mounted() {
+    if (this.$store.getters.getAuthen) {
+      this.addtask = true;
+    }
+    console.log(this.addtask);
     this.getAllMembers();
     this.getAllProject();
     this.timestamp = moment(Date()).format("YYYY-MM-DD");
