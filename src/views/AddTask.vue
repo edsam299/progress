@@ -35,9 +35,16 @@
               ></v-select>
             </v-col>
             <v-col cols="1">
-              <v-btn small color="success" @click="addMemberToTask()"
-                >+Developer</v-btn
-              >
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    <v-btn small color="success" @click="addMemberToTask()"
+                      ><v-icon>mdi-account-plus</v-icon></v-btn
+                    ></span
+                  >
+                </template>
+                <span>Add Developer</span>
+              </v-tooltip>
             </v-col>
             <v-col cols="2">
               <v-text-field
@@ -50,11 +57,37 @@
               ></v-text-field>
             </v-col>
             <v-col cols="2">
-              <v-btn small color="blue" @click="getProjectById()"
-                >getProject</v-btn
-              >
-              <v-btn small color="success" @click="save()">save</v-btn>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    <v-btn small color="blue" @click="getProjectById()"
+                      ><v-icon>mdi-file-find</v-icon></v-btn
+                    ></span
+                  >
+                </template>
+                <span>GetProjectId</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    <v-btn small color="success" @click="save()"
+                      ><v-icon>mdi-database-plus</v-icon></v-btn
+                    ></span
+                  >
+                </template>
+                <span>Save</span>
+              </v-tooltip>
               <v-btn small color="error" @click="clear()">X</v-btn>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    <v-btn small color="success" to="/dashboard"
+                      ><v-icon>mdi-home</v-icon></v-btn
+                    ></span
+                  >
+                </template>
+                <span>Home</span>
+              </v-tooltip>
             </v-col>
           </v-row>
           <div class="pt-5 mt-5" v-if="statuswait">
@@ -93,14 +126,32 @@
                     </v-col>
 
                     <!-- <v-spacer></v-spacer> -->
-                    <v-btn small color="error" @click="removeMember(index)"
-                      >Remove Member</v-btn
-                    >
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span v-bind="attrs" v-on="on">
+                          <v-btn
+                            small
+                            color="error"
+                            @click="removeMember(index)"
+                            ><v-icon>mdi-account-remove</v-icon></v-btn
+                          ></span
+                        >
+                      </template>
+                      <span>Remove Developer</span>
+                    </v-tooltip>
                   </v-col>
                   <v-card outlined>
-                    <v-btn small color="success" @click="addTask(index)"
-                      >Add Task</v-btn
-                    >
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span v-bind="attrs" v-on="on">
+                          <v-btn small color="success" @click="addTask(index)"
+                            ><v-icon>mdi-tag-plus</v-icon></v-btn
+                          ></span
+                        >
+                      </template>
+                      <span>Add Task</span>
+                    </v-tooltip>
+
                     <v-card-title primary-title>
                       <v-row
                         v-for="(items, indexs) in project.members[index].tasks"
@@ -116,12 +167,19 @@
                               autocomplete="nope"
                               v-model="items.task"
                             ></v-text-field>
-                            <v-btn
-                              small
-                              color="error"
-                              @click="removeTask(index, indexs)"
-                              >remove task</v-btn
-                            >
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <span v-bind="attrs" v-on="on">
+                                  <v-btn
+                                    small
+                                    color="error"
+                                    @click="removeTask(index, indexs)"
+                                    ><v-icon>mdi-tag-remove</v-icon></v-btn
+                                  ></span
+                                >
+                              </template>
+                              <span>Remove Task</span>
+                            </v-tooltip>
                           </v-col>
                         </v-container>
                       </v-row>
@@ -192,7 +250,17 @@ export default {
     },
     save() {
       if (typeof this.project.id === "undefined") {
-        this.addProject();
+        if (this.project.members.length > 0) {
+          this.addProject();
+        } else {
+          this.setsnackbar(
+            "Cannot save project cause empty developer",
+            "mdi-checkbox-marked-circle-outline",
+            "Error",
+            "error",
+            3000
+          );
+        }
       } else {
         this.updateProject();
       }

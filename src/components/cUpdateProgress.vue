@@ -23,15 +23,28 @@
                     </v-btn></span
                   >
                 </template>
-                <span>AddTask</span>
+                <span>AddTask / EditTask</span>
               </v-tooltip>
-
-              <v-btn to="/complete" small class="mr-3" color="green">
-                <v-icon left>mdi-checkbox-marked-circle</v-icon>Complete
-              </v-btn>
-              <v-btn to="/deploy" small class="mr-3" color="blue">
-                <v-icon left>mdi-checkbox-marked-circle</v-icon>Deploy
-              </v-btn>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    <v-btn to="/complete" small class="mr-3" color="green">
+                      <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                    </v-btn></span
+                  >
+                </template>
+                <span>Project Complete</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    <v-btn to="/deploy" small class="mr-3" color="blue">
+                      <v-icon left>mdi-webhook</v-icon>
+                    </v-btn></span
+                  >
+                </template>
+                <span>Deploy</span>
+              </v-tooltip>
               <v-btn @click="isActivep = !isActivep" small class="mr-3">
                 Switch
               </v-btn>
