@@ -434,7 +434,11 @@ export default {
     },
   },
   mounted() {
-    this.getAllMembers();
+    if(!this.$store.getters.getAuthen){
+      this.$router.push('dashboard')
+    }else{
+      this.getAllMembers();
+    }    
   },
 };
 </script>
