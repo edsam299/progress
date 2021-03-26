@@ -234,6 +234,14 @@ export default {
     };
   },
   methods: {
+    resetproject(){
+      this.project = [];
+      this.project.enddate=''
+      this.project.starttaskdate=''
+      this.project.kickoff=null
+      this.project.statusCode=''
+      this.project.members=[]
+    },
     setsnackbar(text, icon, title, color, timeout) {
       console.log(timeout);
       this.snackbarcomponent.text = text;
@@ -347,7 +355,7 @@ export default {
         this.statuswait = true;
         let result = await axios
           .post(
-            "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getProjectById",
+            "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocumentId",
             { id: this.idproject }
           )
           .catch((err) => {
@@ -359,11 +367,10 @@ export default {
               5000
             );
           });
-        console.log(result.data);
-        if (result.data.length > 0) {
-          this.project = result.data[0];
+        if (result.data.success) {
+          this.project = result.data.data;
           this.statuswait = false;
-        } else {
+        } else {         
           this.statuswait = false;
           this.setsnackbar(
             "search not found",
@@ -392,7 +399,9 @@ export default {
             5000
           );
         });
+        console.log(result)
       if (result.data != null) {
+        this.resetproject()
         this.setsnackbar(
           "save success",
           "mdi-checkbox-marked-circle-outline",
@@ -400,7 +409,7 @@ export default {
           "success",
           5000
         );
-        this.project = [];
+        //this.project = [];
       }
     },
 
