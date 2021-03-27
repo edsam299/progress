@@ -6,7 +6,14 @@
           <v-img max-width="250px" src="@/assets/deploy.jpg"></v-img>
         </v-col>
         <v-col>
-          <v-chip class="ma-2 mt-4" x-large label color="blue" dark to="/dashboard">
+          <v-chip
+            class="ma-2 mt-4"
+            x-large
+            label
+            color="blue"
+            dark
+            to="/dashboard"
+          >
             <v-icon dark left x-large>mdi-home</v-icon>Home
           </v-chip>
           <v-chip class="ma-2 mt-4" x-large label color="grey darken-3" dark>
@@ -24,7 +31,8 @@
     <div class="pt-5 mt-5" v-if="statuswait">
       <div class="text-center">
         <h2 class="primary--text">
-          <v-icon x-large color="primary">mdi-weather-cloudy</v-icon>กำลังโหลดข้อมูล...
+          <v-icon x-large color="primary">mdi-weather-cloudy</v-icon
+          >กำลังโหลดข้อมูล...
         </h2>
       </div>
       <div>
@@ -62,7 +70,9 @@
               <td class="text-left subtitle-1">
                 <v-tooltip right color="grey darken-4">
                   <template v-slot:activator="{ on, attrs }">
-                    <font v-bind="attrs" v-on="on">{{ datashow.item.domain }}</font>
+                    <font v-bind="attrs" v-on="on">{{
+                      datashow.item.domain
+                    }}</font>
                   </template>
                   <span>ReleaseNote : {{ datashow.item.releaseNote }}</span>
                 </v-tooltip>
@@ -90,14 +100,23 @@
                 </v-chip>
               </td>-->
               <td class="text-left subtitle-1">
-                <v-chip small dark class="ma-2" :color="getcolorType(datashow.item.developer)">
+                <v-chip
+                  small
+                  dark
+                  class="ma-2"
+                  :color="getcolorType(datashow.item.developer)"
+                >
                   <v-icon left>mdi-account</v-icon>
                   {{ datashow.item.developer }}
                 </v-chip>
               </td>
               <td class="text-center subtitle-1">{{ datashow.item.date }}</td>
               <td class="text-center subtitle-1">
-                <font v-if="datashow.item.desc != ''" class="pl-5 caption" color="green">
+                <font
+                  v-if="datashow.item.desc != ''"
+                  class="pl-5 caption"
+                  color="green"
+                >
                   <v-icon small color="primary">mdi-message</v-icon>
                   {{ datashow.item.desc }}
                 </font>
@@ -109,18 +128,31 @@
                   'green lighten-4': datashow.item.status == 'Success',
                 }"
               >
-                <v-icon left v-if="datashow.item.status == 'Success'" color="green">mdi-check</v-icon>
-                <v-icon left v-if="datashow.item.status == 'Fail'" color="orange">mdi-close</v-icon>
+                <v-icon
+                  left
+                  v-if="datashow.item.status == 'Success'"
+                  color="green"
+                  >mdi-check</v-icon
+                >
+                <v-icon
+                  left
+                  v-if="datashow.item.status == 'Fail'"
+                  color="orange"
+                  >mdi-close</v-icon
+                >
                 <!-- {{ datashow.item.status }} -->
               </td>
             </tr>
           </template>
         </v-data-table>
       </v-card>
-      <v-card></v-card>
       <v-dialog v-model="dialog" max-width="1200px">
         <v-card>
-          <v-img class="primary--text align-end" height="50px" src="@/assets/hd.jpg">
+          <v-img
+            class="primary--text align-end"
+            height="50px"
+            src="@/assets/hd.jpg"
+          >
             <v-card-title>
               Add Deploy
               <v-spacer></v-spacer>
@@ -128,15 +160,29 @@
           </v-img>
           <v-card-text>
             <v-row>
-              <v-autocomplete :items="domainList" clearable></v-autocomplete>
+              <v-autocomplete :items="domainList" clearable label="Domain"></v-autocomplete>
             </v-row>
-
             <v-row>
               <v-col cols="3">
-                <v-text-field name="name" label="Project" id="id" outlined dense></v-text-field>
-                <v-text-field name="name" label="Description" id="id" outlined dense></v-text-field>
+                <v-text-field
+                  name="name"
+                  label="Project"
+                  id="id"
+                  outlined
+                  dense
+                ></v-text-field>
+                <v-text-field
+                  name="name"
+                  label="Description"
+                  id="id"
+                  outlined
+                  dense
+                ></v-text-field>
               </v-col>
               <v-col cols="3"></v-col>
+            </v-row>
+            <v-row>
+              <v-col> </v-col>
             </v-row>
           </v-card-text>
           <v-card-actions>
@@ -158,7 +204,7 @@ import moment from "moment";
 import Snackbar from "@/components/cSnackbar.vue";
 export default {
   components: {
-    Snackbar
+    Snackbar,
   },
   data() {
     return {
@@ -172,7 +218,7 @@ export default {
           align: "start",
           sortable: true,
           value: "domain",
-          width: "150px"
+          width: "150px",
         },
         { text: "AppName", value: "appName", sortable: true, width: "100px" },
         { text: "Version", value: "version", width: "100px" },
@@ -180,7 +226,7 @@ export default {
         { text: "ผู้พัฒนา", value: "developer" },
         { text: "DeployDate", value: "date", align: "center", width: "115px" },
         { text: "รายละเอียด", value: "desc", align: "center" },
-        { text: "สถานะ", value: "status", align: "center", width: "90px" }
+        { text: "สถานะ", value: "status", align: "center", width: "90px" },
       ],
       datashow: [],
       dataTableAll: [],
@@ -192,8 +238,8 @@ export default {
         text: "",
         timeout: 3000,
         title: "",
-        visible: false
-      }
+        visible: false,
+      },
     };
   },
   methods: {
@@ -219,7 +265,7 @@ export default {
         "ธนสาร กิติศุภวงศ์": "primary",
         "ฐิติกานต์ เฉยบำรุง": "amber darken-4",
         "สุกัญญา ศรีเตชะ": "teal",
-        "สุริเยนทร์ แดงทองดี": "light-green darken-1"
+        "สุริเยนทร์ แดงทองดี": "light-green darken-1",
       };
       for (const [key, value] of Object.entries(mapCatalogColor)) {
         //console.log(key + ' = ' + value)
@@ -241,7 +287,7 @@ export default {
           "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getDeploy",
           { statusCode: "completed" }
         )
-        .catch(err => {
+        .catch((err) => {
           this.setsnackbar(
             "Load Project " + err,
             "mdi-database",
@@ -284,20 +330,20 @@ export default {
             version: this.dataTableAll[i].version,
             releaseNote: this.dataTableAll[i].releaseNote,
             date: deployDate,
-            status: status
+            status: status,
           };
 
           this.datashow.push(obj);
         }
       }
-    }
+    },
   },
   created() {
     this.getDeploy();
   },
   mounted() {
     //var mydataShow =[];
-  }
+  },
 };
 </script>
 
