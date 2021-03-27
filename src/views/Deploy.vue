@@ -5,32 +5,26 @@
         <v-col cols="2" class="ml-15">
           <v-img max-width="250px" src="@/assets/deploy.jpg"></v-img>
         </v-col>
-        <v-col
-          ><v-chip
-            class="ma-2 mt-4"
-            x-large
-            label
-            color="blue"
-            dark
-            to="/dashboard"
-            ><v-icon dark left x-large>
-              mdi-home
-            </v-icon>
-            Home
+        <v-col>
+          <v-chip class="ma-2 mt-4" x-large label color="blue" dark to="/dashboard">
+            <v-icon dark left x-large>mdi-home</v-icon>Home
           </v-chip>
           <v-chip class="ma-2 mt-4" x-large label color="grey darken-3" dark>
             Deploy ทั้งหมด
             <font class="pl-3 display-1">{{ this.dataTableAll.length }}</font>
-          </v-chip></v-col
-        >
-        <v-col class="d-flex justify-end mr-5"> </v-col>
+          </v-chip>
+          <v-chip class="ma-2 mt-4" x-large label color="blue">
+            <v-btn color="success" @click="showDialog">text</v-btn>
+            <v-icon dark left x-large>mdi-home</v-icon>Add Deploy
+          </v-chip>
+        </v-col>
+        <v-col class="d-flex justify-end mr-5"></v-col>
       </v-row>
     </div>
     <div class="pt-5 mt-5" v-if="statuswait">
       <div class="text-center">
         <h2 class="primary--text">
-          <v-icon x-large color="primary">mdi-weather-cloudy</v-icon>
-          กำลังโหลดข้อมูล...
+          <v-icon x-large color="primary">mdi-weather-cloudy</v-icon>กำลังโหลดข้อมูล...
         </h2>
       </div>
       <div>
@@ -68,9 +62,7 @@
               <td class="text-left subtitle-1">
                 <v-tooltip right color="grey darken-4">
                   <template v-slot:activator="{ on, attrs }">
-                    <font v-bind="attrs" v-on="on"
-                      >{{ datashow.item.domain }}
-                    </font>
+                    <font v-bind="attrs" v-on="on">{{ datashow.item.domain }}</font>
                   </template>
                   <span>ReleaseNote : {{ datashow.item.releaseNote }}</span>
                 </v-tooltip>
@@ -83,11 +75,9 @@
                    releaseNote: {{ datashow.item.releaseNote }}
                   </v-tooltip>
                   </font
-                > -->
+                >-->
               </td>
-              <td class="text-left subtitle-1">
-                {{ datashow.item.appName }}
-              </td>
+              <td class="text-left subtitle-1">{{ datashow.item.appName }}</td>
               <td class="text-left subtitle-1">{{ datashow.item.version }}</td>
               <!-- <td class="text-left subtitle-1">
                 <v-chip
@@ -98,26 +88,19 @@
                 >
                   <v-icon left>mdi-account</v-icon>{{ datashow.item.owner }}
                 </v-chip>
-              </td>   -->
+              </td>-->
               <td class="text-left subtitle-1">
-                <v-chip
-                  small
-                  dark
-                  class="ma-2"
-                  :color="getcolorType(datashow.item.developer)"
-                >
-                  <v-icon left>mdi-account</v-icon>{{ datashow.item.developer }}
+                <v-chip small dark class="ma-2" :color="getcolorType(datashow.item.developer)">
+                  <v-icon left>mdi-account</v-icon>
+                  {{ datashow.item.developer }}
                 </v-chip>
-              </td>                            
+              </td>
               <td class="text-center subtitle-1">{{ datashow.item.date }}</td>
               <td class="text-center subtitle-1">
-                               <font
-                  v-if="datashow.item.desc != ''"
-                  class="pl-5 caption"
-                  color="green"
-                  ><v-icon small color="primary">mdi-message</v-icon>
-                  {{ datashow.item.desc }}</font
-                >
+                <font v-if="datashow.item.desc != ''" class="pl-5 caption" color="green">
+                  <v-icon small color="primary">mdi-message</v-icon>
+                  {{ datashow.item.desc }}
+                </font>
               </td>
               <td
                 class="text-center subtitle-1"
@@ -126,38 +109,61 @@
                   'green lighten-4': datashow.item.status == 'Success',
                 }"
               >
-                <v-icon
-                  left
-                  v-if="datashow.item.status == 'Success'"
-                  color="green"
-                  >mdi-check</v-icon
-                ><v-icon
-                  left
-                  v-if="datashow.item.status == 'Fail'"
-                  color="orange"
-                  > mdi-close</v-icon
-                >
+                <v-icon left v-if="datashow.item.status == 'Success'" color="green">mdi-check</v-icon>
+                <v-icon left v-if="datashow.item.status == 'Fail'" color="orange">mdi-close</v-icon>
                 <!-- {{ datashow.item.status }} -->
               </td>
             </tr>
           </template>
         </v-data-table>
       </v-card>
+      <v-card></v-card>
+      <v-dialog v-model="dialog" max-width="1200px">
+        <v-card>
+          <v-img class="primary--text align-end" height="50px" src="@/assets/hd.jpg">
+            <v-card-title>
+              Add Deploy
+              <v-spacer></v-spacer>
+            </v-card-title>
+          </v-img>
+          <v-card-text>
+            <v-row>
+              <v-autocomplete :items="domainList" clearable></v-autocomplete>
+            </v-row>
+
+            <v-row>
+              <v-col cols="3">
+                <v-text-field name="name" label="Project" id="id" outlined dense></v-text-field>
+                <v-text-field name="name" label="Description" id="id" outlined dense></v-text-field>
+              </v-col>
+              <v-col cols="3"></v-col>
+            </v-row>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="dialog = false">Close</v-btn>
+            <!-- <v-btn color="primary" @click="saveTask">Save</v-btn> -->
+
+            <v-spacer></v-spacer>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
     <Snackbar :snackbarcomponent="snackbarcomponent" />
   </div>
 </template>
-
 <script>
 import axios from "axios";
 import moment from "moment";
 import Snackbar from "@/components/cSnackbar.vue";
 export default {
   components: {
-    Snackbar,
+    Snackbar
   },
   data() {
     return {
+      domainList: ["Billing", "Phamarcy"],
+      dialog: false,
       statuswait: true,
       search: "",
       headers: [
@@ -168,13 +174,13 @@ export default {
           value: "domain",
           width: "150px"
         },
-        { text: "AppName", value: "appName", sortable: true, width: "100px"},
-        { text: "Version", value: "version", width:"100px"},
+        { text: "AppName", value: "appName", sortable: true, width: "100px" },
+        { text: "Version", value: "version", width: "100px" },
         // { text: "Owner", value: "owner" },
-        { text: "ผู้พัฒนา", value: "developer"},
-        { text: "DeployDate", value: "date", align: "center", width:"115px"},       
-        { text: "รายละเอียด", value: "desc", align: "center"}, 
-        { text: "สถานะ", value: "status", align: "center", width:"90px" },       
+        { text: "ผู้พัฒนา", value: "developer" },
+        { text: "DeployDate", value: "date", align: "center", width: "115px" },
+        { text: "รายละเอียด", value: "desc", align: "center" },
+        { text: "สถานะ", value: "status", align: "center", width: "90px" }
       ],
       datashow: [],
       dataTableAll: [],
@@ -186,11 +192,14 @@ export default {
         text: "",
         timeout: 3000,
         title: "",
-        visible: false,
-      },
+        visible: false
+      }
     };
   },
   methods: {
+    showDialog() {
+      this.dialog = true;
+    },
     setsnackbar(text, icon, title, color, timeout) {
       this.snackbarcomponent.text = text;
       this.snackbarcomponent.icon = icon;
@@ -210,7 +219,7 @@ export default {
         "ธนสาร กิติศุภวงศ์": "primary",
         "ฐิติกานต์ เฉยบำรุง": "amber darken-4",
         "สุกัญญา ศรีเตชะ": "teal",
-        "สุริเยนทร์ แดงทองดี": "light-green darken-1",
+        "สุริเยนทร์ แดงทองดี": "light-green darken-1"
       };
       for (const [key, value] of Object.entries(mapCatalogColor)) {
         //console.log(key + ' = ' + value)
@@ -232,7 +241,7 @@ export default {
           "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getDeploy",
           { statusCode: "completed" }
         )
-        .catch((err) => {
+        .catch(err => {
           this.setsnackbar(
             "Load Project " + err,
             "mdi-database",
@@ -251,39 +260,44 @@ export default {
     renderTable() {
       if (this.dataTableAll != null) {
         for (var i = 0; i < this.dataTableAll.length; i++) {
-            var status = "";
-            if (this.dataTableAll[i].status == 'success') {
-              status = "Success";
-            } else {
-              status = "Fail";
-            }
-            moment.locale("th");
-            var deployDate = new Date(this.dataTableAll[i].date);
-            deployDate=deployDate.getFullYear()+'-'+(deployDate.getMonth()+1)+'-'+deployDate.getDate();
-            deployDate=moment(deployDate).format("YYYY-MM-DD")
-            var obj = {
-              domain: this.dataTableAll[i].domain,
-              appName: this.dataTableAll[i].appName,              
-              desc: this.dataTableAll[i].desc,
-              owner: this.dataTableAll[i].owner,            
-              developer: this.dataTableAll[i].develop,
-              version: this.dataTableAll[i].version,
-              releaseNote: this.dataTableAll[i].releaseNote,
-              date: deployDate,
-              status: status,
-            };
+          var status = "";
+          if (this.dataTableAll[i].status == "success") {
+            status = "Success";
+          } else {
+            status = "Fail";
+          }
+          moment.locale("th");
+          var deployDate = new Date(this.dataTableAll[i].date);
+          deployDate =
+            deployDate.getFullYear() +
+            "-" +
+            (deployDate.getMonth() + 1) +
+            "-" +
+            deployDate.getDate();
+          deployDate = moment(deployDate).format("YYYY-MM-DD");
+          var obj = {
+            domain: this.dataTableAll[i].domain,
+            appName: this.dataTableAll[i].appName,
+            desc: this.dataTableAll[i].desc,
+            owner: this.dataTableAll[i].owner,
+            developer: this.dataTableAll[i].develop,
+            version: this.dataTableAll[i].version,
+            releaseNote: this.dataTableAll[i].releaseNote,
+            date: deployDate,
+            status: status
+          };
 
-            this.datashow.push(obj);
+          this.datashow.push(obj);
         }
       }
-    },
+    }
   },
   created() {
     this.getDeploy();
   },
   mounted() {
     //var mydataShow =[];
-  },
+  }
 };
 </script>
 
