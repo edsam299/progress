@@ -146,7 +146,7 @@
           </template>
         </v-data-table>
       </v-card>
-      <v-dialog v-model="dialog" max-width="1200px">
+      <v-dialog v-model="dialog" max-width="1200px" persistent>
         <v-card>
           <v-img
             class="primary--text align-end"
@@ -160,35 +160,83 @@
           </v-img>
           <v-card-text>
             <v-row>
-              <v-autocomplete :items="domainList" clearable label="Domain"></v-autocomplete>
-            </v-row>
-            <v-row>
-              <v-col cols="3">
+              <v-col cols="4">
+                <v-autocomplete
+                  :items="domainList"
+                  clearable
+                  label="Domain"
+                  v-model="domain"
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="4">
+                <v-autocomplete
+                  :items="domainList"
+                  clearable
+                  label="ApplicationName"
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="4">
                 <v-text-field
                   name="name"
-                  label="Project"
+                  label="Tag Version"
                   id="id"
-                  outlined
-                  dense
-                ></v-text-field>
-                <v-text-field
-                  name="name"
-                  label="Description"
-                  id="id"
-                  outlined
-                  dense
+                  autocomplete="autocomplete"
                 ></v-text-field>
               </v-col>
-              <v-col cols="3"></v-col>
             </v-row>
             <v-row>
-              <v-col> </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  name="name"
+                  label="ReleaseNote"
+                  id="id"
+                  outlined
+                  dense
+                  autocomplete="autocomplete"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  name="name"
+                  label="Rollback Description"
+                  id="id"
+                  outlined
+                  dense
+                  autocomplete="autocomplete"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="4">
+                <v-autocomplete
+                  :items="domainList"
+                  clearable
+                  label="Developer"
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  name="name"
+                  label="Deploy Date"
+                  id="id"
+                  autocomplete="autocomplete"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-select
+                  :items="statusDeploy"
+                  v-model="statusDeploySelect"
+                  label="Deploy Status"
+                ></v-select>
+              </v-col>
             </v-row>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="primary" text @click="dialog = false">Close</v-btn>
-            <!-- <v-btn color="primary" @click="saveTask">Save</v-btn> -->
+            <v-btn color="primary" @click="saveDeploy">Save</v-btn>
 
             <v-spacer></v-spacer>
           </v-card-actions>
@@ -208,10 +256,13 @@ export default {
   },
   data() {
     return {
+      statusDeploySelect: "",
+      domain: "",
       domainList: ["Billing", "Phamarcy"],
       dialog: false,
       statuswait: true,
       search: "",
+      statusDeploy: ["success", "fail"],
       headers: [
         {
           text: "Domain",
@@ -243,6 +294,10 @@ export default {
     };
   },
   methods: {
+    saveDeploy() {
+      console.log(this.statusDeploySelect);
+      console.log(this.domain);
+    },
     showDialog() {
       this.dialog = true;
     },
