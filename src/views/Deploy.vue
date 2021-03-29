@@ -166,20 +166,26 @@
                   clearable
                   label="Domain"
                   v-model="domain"
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="4">
-                <v-autocomplete
-                  :items="domainList"
-                  clearable
-                  label="ApplicationName"
+                  required
                 ></v-autocomplete>
               </v-col>
               <v-col cols="4">
                 <v-text-field
                   name="name"
-                  label="Tag Version"
+                  label="ApplicationName"
+                  v-model="appName"
                   id="id"
+                  required
+                  autocomplete="autocomplete"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  name="name"
+                  label="Tag Version"
+                  v-model="version"
+                  id="id"
+                  required
                   autocomplete="autocomplete"
                 ></v-text-field>
               </v-col>
@@ -192,6 +198,8 @@
                   id="id"
                   outlined
                   dense
+                  required
+                  v-model="releaseNote"
                   autocomplete="autocomplete"
                 ></v-text-field>
               </v-col>
@@ -204,6 +212,7 @@
                   id="id"
                   outlined
                   dense
+                  v-model="desc"
                   autocomplete="autocomplete"
                 ></v-text-field>
               </v-col>
@@ -211,8 +220,10 @@
             <v-row>
               <v-col cols="4">
                 <v-autocomplete
-                  :items="domainList"
+                  :items="members"
                   clearable
+                  v-model="member"
+                  required
                   label="Developer"
                 ></v-autocomplete>
               </v-col>
@@ -221,6 +232,8 @@
                   name="name"
                   label="Deploy Date"
                   id="id"
+                  required
+                  v-model="deployDate"
                   autocomplete="autocomplete"
                 ></v-text-field>
               </v-col>
@@ -256,9 +269,18 @@ export default {
   },
   data() {
     return {
+      deploy:{},
+      version:"",
+      members: [],
+      member:"",
+      desc:"",
+      owner:"",
+      appName:"",
+      releaseNote:"",
+      deployDate:"",
       statusDeploySelect: "",
       domain: "",
-      domainList: ["Billing", "Phamarcy"],
+      domainList: [],
       dialog: false,
       statuswait: true,
       search: "",
@@ -295,8 +317,17 @@ export default {
   },
   methods: {
     saveDeploy() {
-      console.log(this.statusDeploySelect);
-      console.log(this.domain);
+      this.deploy={
+        domain:this.domain,
+        status:this.statusDeploySelect,
+        version:this.version,
+        appName:this.appName,
+        desc:this.desc,
+        owner:this.member,
+        date:new Date(this.deployDate).getTime(),
+        releaseNote:this.releaseNote
+      }
+      console.log(JSON.stringify(this.deploy))
     },
     showDialog() {
       this.dialog = true;
@@ -385,6 +416,63 @@ export default {
       }
       return result;
     },
+    async getAllMembers() {
+      let result = await axios
+        .post(
+          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
+          {
+            collection: "member",
+            criteria: "allOrderby",
+            orderby: { key: "piority", value: "asc" },
+          }
+        )
+        .catch((err) => {
+          this.setsnackbar(
+            "Load Member " + err,
+            "mdi-database",
+            "Fail",
+            "error",
+            5000
+          );
+        });
+      if (result.data != null) {
+        for (let i = 0; i < result.data.length; i++) {
+          if (result.data[i].statuscode == "active") {
+            this.members.push(result.data[i].fullname);
+          }
+        }
+      }
+    },
+    async addDeploy() {
+      this.setsnackbar("กำลังจัดเก็บ", "mdi-database", "save", "info", 5000);
+      let result = await axios
+        .post("https://us-central1-fir-api-514b9.cloudfunctions.net/api/save", {
+          collection: "project",
+          criteria: "save",
+          data: this.deploy,
+        })
+        .catch((err) => {
+          this.setsnackbar(
+            "Load Project " + err,
+            "mdi-database",
+            "Fail",
+            "error",
+            5000
+          );
+        });
+      console.log(result);
+      if (result.data != null) {
+        this.resetproject();
+        this.setsnackbar(
+          "save success",
+          "mdi-checkbox-marked-circle-outline",
+          "Success",
+          "success",
+          5000
+        );
+        //this.project = [];
+      }
+    },
     renderTable() {
       if (this.dataTableAll != null) {
         for (var i = 0; i < this.dataTableAll.length; i++) {
@@ -421,8 +509,9 @@ export default {
     },
   },
   created() {
-    this.getDeploy()
-    this.getAllDomain()
+    this.getDeploy();
+    this.getAllDomain();
+    this.getAllMembers();
   },
   mounted() {
     //var mydataShow =[];
