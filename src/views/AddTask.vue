@@ -321,8 +321,9 @@ export default {
     },
     async getAllMembers() {
       let result = await axios
-        .get(
-          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getAllMember"
+        .post(
+          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
+          {"collection":"member","criteria":"allOrderby","orderby":{"key":"piority","value":"asc"}}
         )
         .catch((err) => {
           this.setsnackbar(
@@ -355,8 +356,8 @@ export default {
         this.statuswait = true;
         let result = await axios
           .post(
-            "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocumentId",
-            { id: this.idproject }
+            "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
+            {"collection":"project","criteria":"id","id":this.idproject}
           )
           .catch((err) => {
             this.setsnackbar(
@@ -387,8 +388,8 @@ export default {
       this.setsnackbar("กำลังจัดเก็บ", "mdi-database", "save", "info", 5000);
       let result = await axios
         .post(
-          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/addProject",
-          this.project
+          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/save",
+          {collection:"project", criteria:"save",data:this.project}
         )
         .catch((err) => {
           this.setsnackbar(
@@ -417,8 +418,8 @@ export default {
       this.setsnackbar("กำลังจัดเก็บ", "mdi-database", "save", "info", 5000);
       let result = await axios
         .post(
-          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/updateProject",
-          this.project
+          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/save",
+          {collection:"project", criteria:"update",data:this.project}
         )
         .catch((err) => {
           this.setsnackbar(

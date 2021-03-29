@@ -560,8 +560,8 @@ export default {
     async getAllProject() {
       let result = await axios
         .post(
-          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getAllProject",
-          { statusCode: "active" }
+          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
+          {collection:"project","criteria":"where","where":{"key":"statusCode","value":"active","operator":"=="}, "orderby":false}
         )
         .catch((err) => {
           this.setsnackbar(
@@ -580,8 +580,9 @@ export default {
     },
     async getAllMembers() {
       let result = await axios
-        .get(
-          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getAllMember"
+        .post(
+          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
+          {"collection":"member","criteria":"allOrderby","orderby":{"key":"piority","value":"asc"}}
         )
         .catch((err) => {
           this.setsnackbar(
@@ -666,8 +667,8 @@ export default {
       this.taskpercentage = [];
       let result = await axios
         .post(
-          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/updateProject",
-          progress
+          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/save",
+          {collection:"project", criteria:"update",data:progress}
         )
         .catch((err) => {
           this.setsnackbar(
@@ -678,7 +679,8 @@ export default {
             5000
           );
         });
-      if (result.data.length > 0) {
+        console.log(result.data)
+      if (result.data!=null) {
         this.setsnackbar(
           "save success",
           "mdi-checkbox-marked-circle-outline",

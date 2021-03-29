@@ -68,8 +68,8 @@ export default {
       // axios.post()
       this.statuswait = true;
       let result = await axios.post(
-        "https://us-central1-fir-api-514b9.cloudfunctions.net/api/authentication",
-        { securitykey: this.securitykey }
+        "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
+        {collection:"authentication",criteria:"where",where:{key:"securitykey",value:this.securitykey,operator:"=="}}
       );      
       if (result.data.length > 0) {
         this.$store.dispatch("addAuthen", true);
