@@ -256,10 +256,13 @@ export default {
   },
   data() {
     return {
+      statusDeploySelect: "",
+      domain: "",
       domainList: ["Billing", "Phamarcy"],
       dialog: false,
       statuswait: true,
       search: "",
+      statusDeploy: ["success", "fail"],
       headers: [
         {
           text: "Domain",
@@ -291,6 +294,10 @@ export default {
     };
   },
   methods: {
+    saveDeploy() {
+      console.log(this.statusDeploySelect);
+      console.log(this.domain);
+    },
     showDialog() {
       this.dialog = true;
     },
