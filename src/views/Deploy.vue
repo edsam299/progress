@@ -166,6 +166,7 @@
                   clearable
                   label="Domain"
                   v-model="domain"
+                  ref="selectdomain"
                   required
                 ></v-autocomplete>
               </v-col>
@@ -269,15 +270,15 @@ export default {
   },
   data() {
     return {
-      deploy:{},
-      version:"",
+      deploy: {},
+      version: "",
       members: [],
-      member:"",
-      desc:"",
-      owner:"",
-      appName:"",
-      releaseNote:"",
-      deployDate:"",
+      member: "",
+      desc: "",
+      owner: "",
+      appName: "",
+      releaseNote: "",
+      deployDate: "",
       statusDeploySelect: "",
       domain: "",
       domainList: [],
@@ -316,18 +317,33 @@ export default {
     };
   },
   methods: {
+    resetdeploy() {
+      this.deploy = {};
+      this.version = ""
+      this.member = ""
+      this.desc = ""
+      this.owner = ""
+      this.develop = ""
+      this.appName = ""
+      this.releaseNote = ""
+      this.deployDate = ""
+      this.domain=""
+      this.statusDeploySelect=""
+      this.$refs.selectdomain.focus();
+    },
     saveDeploy() {
-      this.deploy={
-        domain:this.domain,
-        status:this.statusDeploySelect,
-        version:this.version,
-        appName:this.appName,
-        desc:this.desc,
-        owner:this.member,
-        date:new Date(this.deployDate).getTime(),
-        releaseNote:this.releaseNote
-      }
-      console.log(JSON.stringify(this.deploy))
+      this.deploy = {
+        domain: this.domain,
+        status: this.statusDeploySelect,
+        version: this.version,
+        appName: this.appName,
+        desc: this.desc,
+        owner: this.member,
+        develop: this.member,
+        date: new Date(this.deployDate).getTime(),
+        releaseNote: this.releaseNote,
+      };
+      this.addDeploy(this.deploy);
     },
     showDialog() {
       this.dialog = true;
@@ -443,13 +459,13 @@ export default {
         }
       }
     },
-    async addDeploy() {
+    async addDeploy(deploy) {
       this.setsnackbar("กำลังจัดเก็บ", "mdi-database", "save", "info", 5000);
       let result = await axios
         .post("https://us-central1-fir-api-514b9.cloudfunctions.net/api/save", {
-          collection: "project",
+          collection: "deploy",
           criteria: "save",
-          data: this.deploy,
+          data: deploy,
         })
         .catch((err) => {
           this.setsnackbar(
@@ -460,9 +476,9 @@ export default {
             5000
           );
         });
-      console.log(result);
-      if (result.data != null) {
-        this.resetproject();
+
+      if (result.data.success == true) {
+        this.resetdeploy();
         this.setsnackbar(
           "save success",
           "mdi-checkbox-marked-circle-outline",
