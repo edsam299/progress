@@ -20,12 +20,29 @@
             Deploy ทั้งหมด
             <font class="pl-3 display-1">{{ this.dataTableAll.length }}</font>
           </v-chip>
-          <v-chip class="ma-2 mt-4" x-large label color="blue">
-            <v-btn color="success" @click="showDialog">text</v-btn>
-            <v-icon dark left x-large>mdi-home</v-icon>Add Deploy
+          <v-chip
+            class="ma-2 mt-4"
+            x-large
+            label
+            color="green"
+            dark
+            @click="showDialog"
+            v-show="permission"
+          >
+            <v-icon dark left x-large>mdi-webhook</v-icon>Add Deploy
+          </v-chip>
+          <v-chip
+            class="ma-2 mt-4"
+            x-large
+            label
+            color="orange"
+            dark
+            @click="getDeploy"
+          >
+            <v-icon dark left x-large>mdi-webhook</v-icon>Show Deploy
           </v-chip>
         </v-col>
-        <v-col class="d-flex justify-end mr-5"></v-col>
+        <!-- <v-col class="d-flex justify-end mr-5"></v-col> -->
       </v-row>
     </div>
     <div class="pt-5 mt-5" v-if="statuswait">
@@ -270,6 +287,7 @@ export default {
   },
   data() {
     return {
+      permission: false,
       deploy: {},
       version: "",
       members: [],
@@ -283,7 +301,7 @@ export default {
       domain: "",
       domainList: [],
       dialog: false,
-      statuswait: true,
+      statuswait: false,
       search: "",
       statusDeploy: ["success", "fail"],
       headers: [
@@ -319,16 +337,16 @@ export default {
   methods: {
     resetdeploy() {
       this.deploy = {};
-      this.version = ""
-      this.member = ""
-      this.desc = ""
-      this.owner = ""
-      this.develop = ""
-      this.appName = ""
-      this.releaseNote = ""
-      this.deployDate = ""
-      this.domain=""
-      this.statusDeploySelect=""
+      this.version = "";
+      this.member = "";
+      this.desc = "";
+      this.owner = "";
+      this.develop = "";
+      this.appName = "";
+      this.releaseNote = "";
+      this.deployDate = "";
+      this.domain = "";
+      this.statusDeploySelect = "";
       this.$refs.selectdomain.focus();
     },
     saveDeploy() {
@@ -384,6 +402,7 @@ export default {
       }
     },
     async getDeploy() {
+      this.statuswait = true;
       let result = await axios
         .post(
           "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
@@ -525,12 +544,14 @@ export default {
     },
   },
   created() {
-    this.getDeploy();
     this.getAllDomain();
     this.getAllMembers();
   },
   mounted() {
     //var mydataShow =[];
+    if (this.$store.getters.getAuthen) {
+      this.permission = true;
+    }
   },
 };
 </script>
