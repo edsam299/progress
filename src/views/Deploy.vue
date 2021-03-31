@@ -479,6 +479,7 @@ export default {
       }
     },
     async addDeploy(deploy) {
+      console.log(deploy)
       this.setsnackbar("กำลังจัดเก็บ", "mdi-database", "save", "info", 5000);
       let result = await axios
         .post("https://us-central1-fir-api-514b9.cloudfunctions.net/api/save", {
