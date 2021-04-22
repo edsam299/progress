@@ -207,8 +207,12 @@ export default {
     async getAllProjectCompleted() {
       let result = await axios
         .post(
-          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getAllProject",
-          { statusCode: "completed" }
+          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
+          {
+            collection: "project",
+            criteria: "allOrderby",
+            orderby: { key: "piority", value: "asc" },
+          }
         )
         .catch((err) => {
           this.setsnackbar(
@@ -255,7 +259,7 @@ export default {
                 taskAll = taskAll + ", " + inTask;
               }
             }
-             moment.locale("th");
+            moment.locale("th");
             var obj = {
               project: projectName,
               description: txtDescription,
@@ -264,7 +268,9 @@ export default {
               manday: this.dataTableAll[i].members[j].manday,
               actuallyday: this.dataTableAll[i].members[j].actuallyday,
               startDate: this.dataTableAll[i].members[j].starttaskdate,
-              endDate:moment(this.dataTableAll[i].members[j].lastupd).format("YYYY-MM-DD"),
+              endDate: moment(this.dataTableAll[i].members[j].lastupd).format(
+                "YYYY-MM-DD"
+              ),
               status: status,
             };
 
