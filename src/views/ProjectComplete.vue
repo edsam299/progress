@@ -208,11 +208,7 @@ export default {
       let result = await axios
         .post(
           "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
-          {
-            collection: "project",
-            criteria: "allOrderby",
-            orderby: { key: "piority", value: "asc" },
-          }
+          {"collection":"project","criteria":"where","where":{"key":"statusCode", "value":"completed","operator":"=="}, "orderby":false}
         )
         .catch((err) => {
           this.setsnackbar(
