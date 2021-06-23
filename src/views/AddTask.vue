@@ -241,6 +241,7 @@ export default {
       this.project.kickoff=null
       this.project.statusCode=''
       this.project.members=[]
+      this.memberSelected=""     
     },
     setsnackbar(text, icon, title, color, timeout) {
       console.log(timeout);

@@ -233,6 +233,12 @@ export default {
           var projectName = this.dataTableAll[i].project;
           txtDescription = this.dataTableAll[i].description;
           for (var j = 0; j < this.dataTableAll[i].members.length; j++) {
+            // if(this.dataTableAll[i].members[j].lastupd!=undefined){
+            //   if(this.dataTableAll[i].members[j].lastupd.indexOf('2020')>=0){
+            //     continue
+            //   }
+            // }
+
             var status = "";
             var membername = this.dataTableAll[i].members[j].member;
             var manday = this.dataTableAll[i].members[j].manday;
@@ -256,6 +262,7 @@ export default {
               }
             }
             moment.locale("th");
+            console.log(this.dataTableAll[i].members[j].lastupd)
             var obj = {
               project: projectName,
               description: txtDescription,
