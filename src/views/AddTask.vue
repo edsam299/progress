@@ -243,7 +243,6 @@ export default {
       this.project.statusCode='active'
       this.project.members=[]
       this.memberSelected=""     
-      console.log(this.project)
     },
     setsnackbar(text, icon, title, color, timeout) {
       console.log(timeout);
@@ -278,7 +277,6 @@ export default {
     },
     setMember(member) {
       this.memberSelected = member;
-      console.log(this.memberSelected);
     },
     addMemberToTask() {
       if (this.memberSelected == "") {
@@ -306,7 +304,6 @@ export default {
       }
     },
     addTask(index) {
-      console.log(index);
       this.project.members[index].tasks.push({
         task: "",
         lastupd: "ssss",
