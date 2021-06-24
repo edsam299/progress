@@ -234,14 +234,16 @@ export default {
     };
   },
   methods: {
-    resetproject(){
-      this.project = [];
+    resetproject(){     
+      this.project.description=''
+      this.project.project='';
       this.project.enddate=''
       this.project.starttaskdate=''
       this.project.kickoff=null
-      this.project.statusCode=''
+      this.project.statusCode='active'
       this.project.members=[]
       this.memberSelected=""     
+      console.log(this.project)
     },
     setsnackbar(text, icon, title, color, timeout) {
       console.log(timeout);
