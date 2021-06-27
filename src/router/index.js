@@ -51,6 +51,11 @@ const routes = [
     name: "addtask",
     component: () => import("../views/AddTask.vue"),
   },
+  {
+    path: "/viewproject",
+    name: "viewproject",
+    component: () => import("../components/cViewProject.vue"),
+  },
 ];
 
 const router = new VueRouter({

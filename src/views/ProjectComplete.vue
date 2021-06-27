@@ -208,7 +208,12 @@ export default {
       let result = await axios
         .post(
           "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
-          {"collection":"project","criteria":"where","where":{"key":"statusCode", "value":"completed","operator":"=="}, "orderby":false}
+          {
+            collection: "project",
+            criteria: "where",
+            where: { key: "statusCode", value: "completed", operator: "==" },
+            orderby: false,
+          }
         )
         .catch((err) => {
           this.setsnackbar(
@@ -262,7 +267,7 @@ export default {
               }
             }
             moment.locale("th");
-            console.log(this.dataTableAll[i].members[j].lastupd)
+            console.log(this.dataTableAll[i].members[j].lastupd);
             var obj = {
               project: projectName,
               description: txtDescription,
