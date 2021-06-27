@@ -3,6 +3,19 @@
     <v-app>
       <v-main>
         <v-container fluid>
+          <v-row>
+            <span v-for="(item, index) in projects" :key="index">
+              <v-chip
+                class="ma-2"
+                color="green"
+                text-color="blue"
+                outlined
+                @click="getProjectId(index)"
+              >
+                {{ item.project }}
+              </v-chip>
+            </span>
+          </v-row>
           <v-row no-gutters>
             <v-col cols="1">
               <v-text-field
@@ -14,7 +27,7 @@
                 width="10px"
               ></v-text-field>
             </v-col>
-            <v-col cols="4">
+            <v-col cols="6">
               <v-text-field
                 name="name"
                 label="Description"
@@ -34,7 +47,7 @@
                 width="10%"
               ></v-select>
             </v-col>
-            <v-col cols="1">
+            <v-col cols="3">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <span v-bind="attrs" v-on="on">
@@ -45,29 +58,7 @@
                 </template>
                 <span>Add Developer</span>
               </v-tooltip>
-            </v-col>
-            <v-col cols="2">
-              <v-text-field
-                name="name"
-                label="id"
-                id="id"
-                ref="idproject"
-                v-model="idproject"
-                autocomplete="autocomplete"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="2">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <span v-bind="attrs" v-on="on">
-                    <v-btn small color="blue" @click="getProjectById()"
-                      ><v-icon>mdi-file-find</v-icon></v-btn
-                    ></span
-                  >
-                </template>
-                <span>GetProjectId</span>
-              </v-tooltip>
-              <v-tooltip bottom>
+                            <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <span v-bind="attrs" v-on="on">
                     <v-btn small color="success" @click="save()"
@@ -89,6 +80,49 @@
                 <span>Home</span>
               </v-tooltip>
             </v-col>
+            <!-- <v-col cols="2">
+              <v-text-field
+                name="name"
+                label="id"
+                id="id"
+                ref="idproject"
+                v-model="idproject"
+                autocomplete="autocomplete"
+              ></v-text-field>
+            </v-col> -->
+            <!-- <v-col cols="2"> -->
+              <!-- <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    <v-btn small color="blue" @click="getProjectById()"
+                      ><v-icon>mdi-file-find</v-icon></v-btn
+                    ></span
+                  >
+                </template>
+                <span>GetProjectId</span>
+              </v-tooltip> -->
+              <!-- <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    <v-btn small color="success" @click="save()"
+                      ><v-icon>mdi-database-plus</v-icon></v-btn
+                    ></span
+                  >
+                </template>
+                <span>Save</span>
+              </v-tooltip>
+              <v-btn small color="error" @click="clear()">X</v-btn>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    <v-btn small color="success" to="/dashboard"
+                      ><v-icon>mdi-home</v-icon></v-btn
+                    ></span
+                  >
+                </template>
+                <span>Home</span>
+              </v-tooltip> -->
+            <!-- </v-col> -->
           </v-row>
           <div class="pt-5 mt-5" v-if="statuswait">
             <div class="text-center">
@@ -180,6 +214,7 @@
                               </template>
                               <span>Remove Task</span>
                             </v-tooltip>
+                             {{items.value}} %
                           </v-col>
                         </v-container>
                       </v-row>
@@ -210,6 +245,7 @@ export default {
   },
   data() {
     return {
+      projects:[],
       snackbarcomponent: {
         color: "green",
         icon: "",
@@ -234,18 +270,17 @@ export default {
     };
   },
   methods: {
-    resetproject(){     
-      this.project.description=''
-      this.project.project='';
-      this.project.enddate=''
-      this.project.starttaskdate=''
-      this.project.kickoff=null
-      this.project.statusCode='active'
-      this.project.members=[]
-      this.memberSelected=""     
+    resetproject() {
+      this.project.description = "";
+      this.project.project = "";
+      this.project.enddate = "";
+      this.project.starttaskdate = "";
+      this.project.kickoff = null;
+      this.project.statusCode = "active";
+      this.project.members = [];
+      this.memberSelected = "";
     },
     setsnackbar(text, icon, title, color, timeout) {
-      console.log(timeout);
       this.snackbarcomponent.text = text;
       this.snackbarcomponent.icon = icon;
       this.snackbarcomponent.title = title;
@@ -316,14 +351,17 @@ export default {
       this.project.members[memberIndex].tasks.splice(taskIndex, 1);
     },
     removeMember(index) {
-      console.log(index);
       this.project.members.splice(index, 1);
     },
     async getAllMembers() {
       let result = await axios
         .post(
           "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
-          {"collection":"member","criteria":"allOrderby","orderby":{"key":"piority","value":"asc"}}
+          {
+            collection: "member",
+            criteria: "allOrderby",
+            orderby: { key: "piority", value: "asc" },
+          }
         )
         .catch((err) => {
           this.setsnackbar(
@@ -342,6 +380,39 @@ export default {
         }
       }
     },
+      async getProject() {
+      let result = await axios
+        .post(
+          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
+          {
+            collection: "project",
+            criteria: "where",
+            where: { key: "statusCode", value: "active", operator: "==" },
+            orderby: false,
+          }
+        )
+        .catch((err) => {
+          this.setsnackbar(
+            "Load Project " + err,
+            "mdi-database",
+            "Fail",
+            "error",
+            5000
+          );
+        });
+      if (result.data.length > 0) {
+        // this.statuswait = false;
+        // this.dataTableAll = result.data;
+        this.projects = result.data;
+        // this.renderTable();
+      }
+      return result;
+    },
+    getProjectId(index){
+      // console.log(this.projects[index].id)
+      this.idproject = this.projects[index].id
+      this.getProjectById()
+    },
     async getProjectById() {
       if (this.idproject == null) {
         this.setsnackbar(
@@ -357,7 +428,7 @@ export default {
         let result = await axios
           .post(
             "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
-            {"collection":"project","criteria":"id","id":this.idproject}
+            { collection: "project", criteria: "id", id: this.idproject }
           )
           .catch((err) => {
             this.setsnackbar(
@@ -371,7 +442,7 @@ export default {
         if (result.data.success) {
           this.project = result.data.data;
           this.statuswait = false;
-        } else {         
+        } else {
           this.statuswait = false;
           this.setsnackbar(
             "search not found",
@@ -387,10 +458,11 @@ export default {
     async addProject() {
       this.setsnackbar("กำลังจัดเก็บ", "mdi-database", "save", "info", 5000);
       let result = await axios
-        .post(
-          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/save",
-          {collection:"project", criteria:"save",data:this.project}
-        )
+        .post("https://us-central1-fir-api-514b9.cloudfunctions.net/api/save", {
+          collection: "project",
+          criteria: "save",
+          data: this.project,
+        })
         .catch((err) => {
           this.setsnackbar(
             "Load Project " + err,
@@ -400,9 +472,9 @@ export default {
             5000
           );
         });
-        console.log(result)
+
       if (result.data != null) {
-        this.resetproject()
+        this.resetproject();
         this.setsnackbar(
           "save success",
           "mdi-checkbox-marked-circle-outline",
@@ -417,10 +489,11 @@ export default {
     async updateProject() {
       this.setsnackbar("กำลังจัดเก็บ", "mdi-database", "save", "info", 5000);
       let result = await axios
-        .post(
-          "https://us-central1-fir-api-514b9.cloudfunctions.net/api/save",
-          {collection:"project", criteria:"update",data:this.project}
-        )
+        .post("https://us-central1-fir-api-514b9.cloudfunctions.net/api/save", {
+          collection: "project",
+          criteria: "update",
+          data: this.project,
+        })
         .catch((err) => {
           this.setsnackbar(
             "Load Project " + err,
@@ -444,11 +517,12 @@ export default {
     },
   },
   mounted() {
-    if(!this.$store.getters.getAuthen){
-      this.$router.push('dashboard')
-    }else{
+    if (!this.$store.getters.getAuthen) {
+      this.$router.push("dashboard");
+    } else {
       this.getAllMembers();
-    }    
+      this.getProject()
+    }
   },
 };
 </script>
