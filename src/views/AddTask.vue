@@ -279,6 +279,7 @@ export default {
       this.project.statusCode = "active";
       this.project.members = [];
       this.memberSelected = "";
+      this.projects=[] //project ทั้งหมดที่ active
     },
     setsnackbar(text, icon, title, color, timeout) {
       this.snackbarcomponent.text = text;
@@ -475,6 +476,7 @@ export default {
 
       if (result.data != null) {
         this.resetproject();
+        this.getProject()
         this.setsnackbar(
           "save success",
           "mdi-checkbox-marked-circle-outline",
@@ -509,10 +511,11 @@ export default {
           "mdi-checkbox-marked-circle-outline",
           "Success",
           "success",
-          5000
-        );
+          3000
+        );        
         this.project = [];
         this.idproject = "";
+        this.getProject()
       }
     },
   },
