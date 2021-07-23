@@ -53,7 +53,6 @@ export default {
           );
         });
       if (result.data.length > 0) {
-        console.log(result.data);
         // this.statuswait = false;
         // this.dataTableAll = result.data;
         this.projects = result.data;

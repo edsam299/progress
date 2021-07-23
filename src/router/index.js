@@ -55,6 +55,10 @@ const routes = [
     path: "/viewproject",
     name: "viewproject",
     component: () => import("../components/cViewProject.vue"),
+  },  {
+    path: "/notify",
+    name: "notify",
+    component: () => import("../views/Notify.vue"),
   },
 ];
 
