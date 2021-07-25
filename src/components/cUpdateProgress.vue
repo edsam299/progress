@@ -679,7 +679,6 @@ export default {
             5000
           );
         });
-        console.log(result.data)
       if (result.data!=null) {
         this.setsnackbar(
           "save success",

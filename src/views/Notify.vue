@@ -33,28 +33,151 @@
               <v-icon>mdi-history</v-icon>
             </v-btn>
           </v-bottom-navigation>
-          <v-row no-gutters>
-            <v-col cols="8">
-              <!-- <v-card> -->
-                <span v-for="(item, index) in message" :key="index">
-                  <v-text-field
-                    v-model="item.message"
-                    name="name"
-                    label="ข้อความ"
-                    id="id"
-                  ></v-text-field>
-                </span>
-              <!-- </v-card> -->
-            </v-col>
-            <v-col cols="4">
-              <v-card>
-                testss
+          <v-row dense>
+            <v-col cols="12">
+              <v-card class="mx-auto">
+                <v-container fluid>
+                  <v-row dense>
+                    <v-col
+                      v-for="(card, indexs) in messageList"
+                      :key="indexs"
+                      :cols="6"
+                    >
+                      <v-card>
+                        <!-- <v-img
+              :src="card.day"
+              class="white--text align-end"
+              gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+              height="200px"
+            >
+              <v-card-title v-text="card.title"></v-card-title>
+            </v-img> -->
+                        <v-card-text>
+                          <span
+                            v-for="(items, index) in card.messages"
+                            :key="index"
+                          >
+                            <div
+                              v-if="items.message != ''"
+                              class="text--primary"
+                            >
+                              {{ items.message }}
+                            </div>
+                            <div v-else>
+                              <br />
+                            </div>
+                          </span>
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-icon v-model="value">mdi-history</v-icon>{{ getDay(card.day) }} Send Message {{ card.send }}
+                          <v-btn icon @click="openSetting(indexs)">
+                            <v-icon>mdi-note-plus-outline</v-icon>
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-container>
               </v-card>
             </v-col>
           </v-row>
         </v-container>
       </v-main>
     </v-app>
+    <v-row justify="center">
+      <v-dialog
+        v-model="dialog"
+        fullscreen
+        hide-overlay
+        transition="dialog-bottom-transition"
+      >
+        <v-card>
+          <v-toolbar dark color="green">
+            <v-btn icon dark @click="dialog = false">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+            <v-toolbar-title>Settings</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+              <v-btn dark text @click="save()">
+                Save
+              </v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
+
+          <v-col cols="12">
+            <v-row>
+              <v-col cols="5">
+                <v-list>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title>Current Token</v-list-item-title>
+                      <v-list-item-subtitle>
+                        <v-text-field
+                          v-model="currentToken"
+                          label="token"
+                          id="id"
+                        ></v-text-field>
+                      </v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-col>
+              <v-col cols="6">
+                <!-- <v-subheader>Line Control</v-subheader> -->
+                <span v-for="(item, index) in tokenList" :key="index">
+                  <v-list>
+                    <v-list-item>
+                      <v-list-item-content>
+                        <v-list-item-title>{{ item.desc }}</v-list-item-title>
+                        <v-list-item-subtitle>{{
+                          item.token
+                        }}</v-list-item-subtitle>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list>
+                </span>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-divider></v-divider>
+          <v-list>
+            <v-subheader
+              ><span>{{ day }} </span
+              ><v-btn color="success" @click="addMessage()"
+                >+</v-btn  
+              >
+              <v-checkbox label="ส่งข้อความ" v-model="sendMessage"></v-checkbox>
+              </v-subheader
+            >
+            <v-list-item>
+              <v-list-item-content>
+                <span
+                  v-for="(item, index) in messageSetting.messages"
+                  :key="index"
+                >
+                  <v-row no-gutters>
+                    <v-col cols="11">
+                      <v-text-field
+                        v-model="item.message"
+                        label="ข้อความ"
+                        id="id"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="1">
+                      <v-btn color="error" @click="removeMessage(index)"
+                        >X</v-btn
+                      >
+                    </v-col>
+                  </v-row>
+                </span>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-dialog>
+    </v-row>
   </div>
 </template>
 <script>
@@ -65,6 +188,25 @@ export default {
       value: [],
       notify: [],
       message: [],
+      messageList: [],
+      dialog: false,
+      notifications: false,
+      sound: true,
+      widgets: false,
+      currentToken: "",
+      tokenList: [],
+      messageSetting: [],
+      sendMessage:false,
+      days: [
+        "อาทิตย์",
+        "จันทร์",
+        "อังคาร",
+        "พุธ",
+        "พฤหัสบดี",
+        "ศุกร์",
+        "เสาร์",
+      ],
+      day: "",
     };
   },
   mounted() {
@@ -95,7 +237,10 @@ export default {
         });
       if (result.data.length > 0) {
         this.notify = result.data[0];
-        console.log(this.notify);
+        this.currentToken = this.notify.token;
+        this.tokenList = this.notify.tokenList;
+        this.messageList = this.notify.messageList;
+        console.log(this.messageList);
         // this.statuswait = false;
         // this.displayChart();
       }
@@ -111,12 +256,51 @@ export default {
         }
       }
     },
+    getDay(day) {
+      return this.days[day];
+    },
+    openSetting(index) {
+      this.dialog = true;
+      this.messageSetting = this.notify.messageList[index];
+      this.day = this.days[index];
+      this.sendMessage = this.messageSetting.send
+    },
+    addMessage() {
+      this.messageSetting.messages.push({ message: "", status: "active" });
+    },
+    removeMessage(index) {
+      this.messageSetting.messages.splice(index, 1);
+    },
+    async save() {
+      this.dialog = false;
+      this.notify.token = this.currentToken
+      this.messageSetting.send = this.sendMessage
+      // console.log(JSON.stringify(this.notify))
+      let result = await axios
+        .post("https://us-central1-fir-api-514b9.cloudfunctions.net/api/save", {
+          collection: "notify",
+          criteria: "update",
+          data: this.notify,
+        })
+        .catch((err) => {
+          this.setsnackbar(
+            "save fail " + err,
+            "mdi-close-circle",
+            "Fail",
+            "error",
+            5000
+          );
+        });
+      if (result.data != null) {
+        console.log("success");
+      }
+    },
   },
 };
 </script>
 <style>
 .container {
-  max-width: 100vw;
+  /* max-width: 100vw; */
   padding: 0px;
 }
 </style>
