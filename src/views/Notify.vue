@@ -3,6 +3,20 @@
     <v-app>
       <v-main>
         <v-container fluid>
+          <div class="pt-5 mt-5" v-if="statuswait">
+            <div class="text-center">
+              <h2 class="primary--text">
+                <v-icon x-large color="primary">mdi-weather-cloudy</v-icon>
+                Line Notify...
+              </h2>
+            </div>
+            <div>
+              <v-progress-linear
+                indeterminate
+                color="primary"
+              ></v-progress-linear>
+            </div>
+          </div>
           <!-- <v-bottom-navigation :value="value" color="teal" grow>
             <v-btn @click="viewNotify(0)">
               <span>อาทิตย์</span>
@@ -69,7 +83,8 @@
                           </span>
                         </v-card-text>
                         <v-card-actions>
-                          <v-spacer></v-spacer>หัวข้อ : {{card.topic}} &nbsp; เวลา &nbsp; {{card.time}} &nbsp; >>
+                          <v-spacer></v-spacer>หัวข้อ : {{ card.topic }} &nbsp;
+                          เวลา &nbsp; {{ card.time }} &nbsp;
                           <v-icon
                             v-bind:style="[
                               currentDay == card.day
@@ -139,9 +154,31 @@
                       <v-list-item-title>Current Token</v-list-item-title>
                       <v-list-item-subtitle>
                         <v-text-field
+                          class="centered-input text--darken-3 mt-3"
+                          value="Select the configuration:"
+                          color="grey lighten-43"
+                          dense
+                          single-line
                           v-model="currentToken"
                           label="token"
-                          id="id"
+                        ></v-text-field>
+                        <v-text-field
+                          class="centered-input text--darken-3 mt-3"
+                          value="Select the configuration:"
+                          color="grey lighten-43"
+                          dense
+                          single-line
+                          v-model="stickerPackageId"
+                          label="stickerPackageId"
+                        ></v-text-field>
+                        <v-text-field
+                          class="centered-input text--darken-3 mt-3"
+                          value="Select the configuration:"
+                          color="grey lighten-43"
+                          dense
+                          single-line
+                          v-model="stickerId"
+                          label="stickerId"
                         ></v-text-field>
                       </v-list-item-subtitle>
                     </v-list-item-content>
@@ -230,13 +267,29 @@
         </v-card>
       </v-dialog>
     </v-row>
+    <Snackbar :snackbarcomponent="snackbarcomponent" />
   </div>
 </template>
 <script>
 import axios from "axios";
+import Snackbar from "@/components/cSnackbar.vue";
 export default {
+  components: {
+    Snackbar,
+  },
   data() {
     return {
+      snackbarcomponent: {
+        color: "green",
+        icon: "",
+        mode: "",
+        position: "top",
+        text: "",
+        timeout: 3000,
+        title: "",
+        visible: false,
+      },
+      statuswait: true,
       currentDay: new Date().getDay(),
       value: [],
       notify: [],
@@ -247,6 +300,8 @@ export default {
       sound: true,
       widgets: false,
       currentToken: "",
+      stickerPackageId: "",
+      stickerId: "",
       tokenList: [],
       messageSetting: [],
       sendMessage: false,
@@ -270,7 +325,17 @@ export default {
     this.getNotify();
   },
   methods: {
+    setsnackbar(text, icon, title, color, timeout) {
+      this.snackbarcomponent.text = text;
+      this.snackbarcomponent.icon = icon;
+      this.snackbarcomponent.title = title;
+      this.snackbarcomponent.mode = "multi-line";
+      this.snackbarcomponent.color = color;
+      this.snackbarcomponent.visible = true;
+      this.snackbarcomponent.timeout = timeout;
+    },
     async getNotify() {
+      this.statuswait = true;
       let result = await axios
         .post(
           "https://us-central1-fir-api-514b9.cloudfunctions.net/api/getdocument",
@@ -295,7 +360,7 @@ export default {
         this.currentToken = this.notify.token;
         this.tokenList = this.notify.tokenList;
         this.messageList = this.notify.messageList;
-        console.log(this.messageList);
+        this.statuswait = false;
         // this.statuswait = false;
         // this.displayChart();
       }
@@ -317,6 +382,8 @@ export default {
     openSetting(index) {
       this.dialog = true;
       this.messageSetting = this.notify.messageList[index];
+      this.stickerPackageId = this.notify.stickerPackageId
+      this.stickerId = this.notify.stickerId
       this.day = this.days[index];
       this.sendMessage = this.messageSetting.send;
       this.time = this.messageSetting.time;
@@ -330,10 +397,12 @@ export default {
     },
     async save() {
       this.dialog = false;
-      this.notify.token = this.currentToken
-      this.messageSetting.send = this.sendMessage
-      this.messageSetting.time = this.time
-      this.messageSetting.topic = this.topic
+      this.notify.token = this.currentToken;
+      this.notify.stickerPackageId = this.stickerPackageId;
+      this.notify.stickerId = this.stickerId;
+      this.messageSetting.send = this.sendMessage;
+      this.messageSetting.time = this.time;
+      this.messageSetting.topic = this.topic;
       // console.log(JSON.stringify(this.notify))
       let result = await axios
         .post("https://us-central1-fir-api-514b9.cloudfunctions.net/api/save", {
@@ -351,7 +420,13 @@ export default {
           );
         });
       if (result.data != null) {
-        console.log("success");
+        this.setsnackbar(
+          "save success",
+          "mdi-checkbox-marked-circle-outline",
+          "Success",
+          "success",
+          3000
+        );
       }
     },
   },
