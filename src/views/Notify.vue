@@ -3,7 +3,7 @@
     <v-app>
       <v-main>
         <v-container fluid>
-          <v-bottom-navigation :value="value" color="teal" grow>
+          <!-- <v-bottom-navigation :value="value" color="teal" grow>
             <v-btn @click="viewNotify(0)">
               <span>อาทิตย์</span>
               <v-icon>mdi-history</v-icon>
@@ -32,7 +32,7 @@
               <span>เสาร์</span>
               <v-icon>mdi-history</v-icon>
             </v-btn>
-          </v-bottom-navigation>
+          </v-bottom-navigation> -->
           <v-row dense>
             <v-col cols="12">
               <v-card class="mx-auto">
@@ -69,10 +69,34 @@
                           </span>
                         </v-card-text>
                         <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-icon v-model="value">mdi-history</v-icon>{{ getDay(card.day) }} Send Message {{ card.send }}
+                          <v-spacer></v-spacer>หัวข้อ : {{card.topic}} &nbsp; เวลา &nbsp; {{card.time}} &nbsp; >>
+                          <v-icon
+                            v-bind:style="[
+                              currentDay == card.day
+                                ? { color: 'blue' }
+                                : { color: 'black' },
+                            ]"
+                            v-model="value"
+                            >mdi-history</v-icon
+                          >
+                          <span
+                            v-bind:style="[
+                              currentDay == card.day
+                                ? { color: 'blue' }
+                                : { color: 'black' },
+                            ]"
+                            >{{ getDay(card.day) }}</span
+                          >
+                          <v-icon v-if="card.send" color="teal darken-2"
+                            >mdi-message-text-clock</v-icon
+                          >
+                          <v-icon v-else color="red"
+                            >mdi-message-text-lock</v-icon
+                          >
                           <v-btn icon @click="openSetting(indexs)">
-                            <v-icon>mdi-note-plus-outline</v-icon>
+                            <v-icon color="green darken-2"
+                              >mdi-cog-transfer-outline</v-icon
+                            >
                           </v-btn>
                         </v-card-actions>
                       </v-card>
@@ -124,7 +148,7 @@
                   </v-list-item>
                 </v-list>
               </v-col>
-              <v-col cols="6">
+              <v-col cols="7">
                 <!-- <v-subheader>Line Control</v-subheader> -->
                 <span v-for="(item, index) in tokenList" :key="index">
                   <v-list>
@@ -144,13 +168,36 @@
           <v-divider></v-divider>
           <v-list>
             <v-subheader
-              ><span>{{ day }} </span
-              ><v-btn color="success" @click="addMessage()"
-                >+</v-btn  
-              >
+              ><span style="font-size:18px; color:green"
+                >ประจำวัน {{ day }}</span
+              ><v-btn x-small color="success" @click="addMessage()">+</v-btn>
               <v-checkbox label="ส่งข้อความ" v-model="sendMessage"></v-checkbox>
-              </v-subheader
-            >
+              <v-spacer></v-spacer>หัวข้อ :
+              <v-spacer
+                ><span>
+                  <v-text-field
+                    class="centered-input text--darken-3 mt-3"
+                    value="Select the configuration:"
+                    color="grey lighten-43"
+                    dense
+                    single-line
+                    v-model="topic"
+                    label="หัวข้อ"
+                  ></v-text-field></span
+              ></v-spacer>
+              เวลา :
+              <span
+                ><v-text-field
+                  class="centered-input text--darken-3 mt-3"
+                  value="Select the configuration:"
+                  color="grey lighten-43"
+                  dense
+                  single-line
+                  v-model="time"
+                  label="เวลา"
+                ></v-text-field
+              ></span>
+            </v-subheader>
             <v-list-item>
               <v-list-item-content>
                 <span
@@ -160,13 +207,18 @@
                   <v-row no-gutters>
                     <v-col cols="11">
                       <v-text-field
+                        class="centered-input text--darken-3 mt-0"
+                        value="Select the configuration:"
+                        color="grey lighten-43"
+                        dense
+                        single-line
+                        height="22"
                         v-model="item.message"
                         label="ข้อความ"
-                        id="id"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="1">
-                      <v-btn color="error" @click="removeMessage(index)"
+                      <v-btn x-small color="error" @click="removeMessage(index)"
                         >X</v-btn
                       >
                     </v-col>
@@ -185,6 +237,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      currentDay: new Date().getDay(),
       value: [],
       notify: [],
       message: [],
@@ -196,7 +249,9 @@ export default {
       currentToken: "",
       tokenList: [],
       messageSetting: [],
-      sendMessage:false,
+      sendMessage: false,
+      time: "",
+      topic: "",
       days: [
         "อาทิตย์",
         "จันทร์",
@@ -263,7 +318,9 @@ export default {
       this.dialog = true;
       this.messageSetting = this.notify.messageList[index];
       this.day = this.days[index];
-      this.sendMessage = this.messageSetting.send
+      this.sendMessage = this.messageSetting.send;
+      this.time = this.messageSetting.time;
+      this.topic = this.messageSetting.topic;
     },
     addMessage() {
       this.messageSetting.messages.push({ message: "", status: "active" });
@@ -275,6 +332,8 @@ export default {
       this.dialog = false;
       this.notify.token = this.currentToken
       this.messageSetting.send = this.sendMessage
+      this.messageSetting.time = this.time
+      this.messageSetting.topic = this.topic
       // console.log(JSON.stringify(this.notify))
       let result = await axios
         .post("https://us-central1-fir-api-514b9.cloudfunctions.net/api/save", {
