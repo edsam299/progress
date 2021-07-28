@@ -5,15 +5,15 @@
         <v-container fluid>
           <div class="pt-5 mt-5" v-if="statuswait">
             <div class="text-center">
-              <h2 class="primary--text">
-                <v-icon x-large color="primary">mdi-weather-cloudy</v-icon>
-                Line Notify...
+              <h2 class="green--text">
+                <v-icon x-large color="green">mdi-weather-cloudy</v-icon>
+                Line Notify
               </h2>
             </div>
             <div>
               <v-progress-linear
                 indeterminate
-                color="primary"
+                color="green"
               ></v-progress-linear>
             </div>
           </div>
@@ -304,8 +304,8 @@ export default {
       stickerId: "",
       tokenList: [],
       messageSetting: [],
-      tmpMessage:[],
-      indexMessage:0,
+      tmpMessage: [],
+      indexMessage: 0,
       sendMessage: false,
       time: "",
       topic: "",
@@ -381,20 +381,23 @@ export default {
     getDay(day) {
       return this.days[day];
     },
-    restoreDefault(){
-      this.dialog = false
-      this.notify.messageList[this.indexMessage].messages = this.tmpMessage
+    restoreDefault() {
+      this.dialog = false;
+      this.notify.messageList[this.indexMessage].messages = this.tmpMessage;
     },
     openSetting(index) {
       this.dialog = true;
-      this.indexMessage = index
-      this.messageSetting = this.notify.messageList[index]
-      this.tmpMessage=[]
-      for(let i=0; i<this.notify.messageList[index].messages.length; i++){
-        this.tmpMessage.push(this.notify.messageList[index].messages[i])
+      this.indexMessage = index;
+      this.messageSetting = this.notify.messageList[index];
+      this.tmpMessage = [];
+      for (let i = 0; i < this.notify.messageList[index].messages.length; i++) {
+        this.tmpMessage.push({
+          message: this.notify.messageList[index].messages[i].message,
+          status: this.notify.messageList[index].messages[i].status,
+        });
       }
-      this.stickerPackageId = this.notify.stickerPackageId
-      this.stickerId = this.notify.stickerId
+      this.stickerPackageId = this.notify.stickerPackageId;
+      this.stickerId = this.notify.stickerId;
       this.day = this.days[index];
       this.sendMessage = this.messageSetting.send;
       this.time = this.messageSetting.time;
