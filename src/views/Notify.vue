@@ -133,7 +133,7 @@
       >
         <v-card>
           <v-toolbar dark color="green">
-            <v-btn icon dark @click="dialog = false">
+            <v-btn icon dark @click="restoreDefault()">
               <v-icon>mdi-close</v-icon>
             </v-btn>
             <v-toolbar-title>Settings</v-toolbar-title>
@@ -304,6 +304,8 @@ export default {
       stickerId: "",
       tokenList: [],
       messageSetting: [],
+      tmpMessage:[],
+      indexMessage:0,
       sendMessage: false,
       time: "",
       topic: "",
@@ -379,9 +381,18 @@ export default {
     getDay(day) {
       return this.days[day];
     },
+    restoreDefault(){
+      this.dialog = false
+      this.notify.messageList[this.indexMessage].messages = this.tmpMessage
+    },
     openSetting(index) {
       this.dialog = true;
-      this.messageSetting = this.notify.messageList[index];
+      this.indexMessage = index
+      this.messageSetting = this.notify.messageList[index]
+      this.tmpMessage=[]
+      for(let i=0; i<this.notify.messageList[index].messages.length; i++){
+        this.tmpMessage.push(this.notify.messageList[index].messages[i])
+      }
       this.stickerPackageId = this.notify.stickerPackageId
       this.stickerId = this.notify.stickerId
       this.day = this.days[index];
